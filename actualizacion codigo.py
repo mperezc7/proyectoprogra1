@@ -1,8 +1,4 @@
-# TPO : Registro de asistencia
-# 2 usuarios (usuario observador, admin modifica)
-
 from datetime import datetime
-
 def inicializar_asistencia(sesiones):
     return [[0] * len(sesiones) for _ in range(len(estudiantes))]
 
