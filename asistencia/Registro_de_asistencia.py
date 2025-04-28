@@ -1,24 +1,10 @@
 from datetime import datetime
-def inicializar_asistencia(sesiones,estudiantes):
-    return [[0] * len(sesiones) for _ in range(len(estudiantes))]
-
-def agregar_estudiante(estudiantes, sesiones, asistencia, nombre):
-    estudiante = {"nombre": nombre, "fecha_baja": None, "justificacion_baja": None}
-    estudiantes.append(estudiante)
-    asistencia.append([0] * len(sesiones))
-    print(f"Estudiante '{nombre}' agregado.")
-    return estudiantes, asistencia
-
-def agregar_sesion(sesiones, asistencia, sesion):
-    sesiones.append(sesion)
-    for fila in asistencia:
-        fila.append(0)
-    print(f"Sesión '{sesion}' agregada.")
-    return sesiones, asistencia
+from .estudiantes import agregar_estudiante, buscar_estudiantes_por_nombre
+from .sesiones import agregar_sesion
+from .asistencia import inicializar_asistencia, registrar_asistencia
 
 def obtener_fecha():
     return datetime.now()
-
 def verificar_estado_usuario(fecha_baja, fecha_registro):
     if fecha_baja is None:
         return True
@@ -27,22 +13,6 @@ def verificar_estado_usuario(fecha_baja, fecha_registro):
     else:
         return False
 
-def registrar_asistencia(estudiantes, sesiones, asistencia, estudiante_index, sesion_index):
-    if estudiante_index < 0 or estudiante_index >= len(estudiantes) or \
-       sesion_index < 0 or sesion_index >= len(sesiones):
-        print("Índice de estudiante o sesión no válido.")
-        return asistencia
-
-    estudiante = estudiantes[estudiante_index]
-    fecha_actual = obtener_fecha()
-
-    if verificar_estado_usuario(estudiante["fecha_baja"], fecha_actual):
-        asistencia[estudiante_index][sesion_index] = 1  # 1 para presente
-        print(f"Asistencia registrada para '{estudiante['nombre']}' en la sesión '{sesiones[sesion_index]}'.")
-    else:
-        print(f"El estudiante '{estudiante['nombre']}' está dado de baja y no puede registrar asistencia.")
-    
-    return asistencia
 
 def dar_de_baja_usuario(estudiantes, estudiante_index):
     if estudiante_index < 0 or estudiante_index >= len(estudiantes):
@@ -90,53 +60,60 @@ def calcular_inasistencia_estudiante(estudiantes, sesiones, asistencia, estudian
     return porcentaje_inasistencia
 
 def mostrar_asistencia(estudiantes, sesiones, asistencia):
-    print("\nAsistencia:")
-    print("Estudiantes:", [e["nombre"] for e in estudiantes])
-    print("Sesiones:", sesiones)
-    for i in range(len(estudiantes)):
-        print(f"{estudiantes[i]['nombre']}: ", end="")
-        for j in range(len(sesiones)):
-            print("P" if asistencia[i][j] == 1 else "A", end=" ")
-        print()
+    print("\nAsistencia de Estudiantes:")
+    for i, estudiante in enumerate(estudiantes):
+        print(f"Nombre: {estudiante['nombre']}, Email: {estudiante['email']}")
+        for j, sesion in enumerate(sesiones):
+            estado = "Presente" if asistencia[i][j] == 1 else "Ausente"
+            print(f"  {sesion}: {estado}")
+    print("\n")
 
-def main():
-    estudiantes = []
-    sesiones = []
+def menu():
+    estudiantes = ["camila","leonel"]
+    sesiones = ["sesion1","sesion2"]
     asistencia = []
 
     while True:
-        print("\n----- MENÚ -----")
+        print("Menú:")
         print("1. Agregar Estudiante")
         print("2. Agregar Sesión")
         print("3. Registrar Asistencia")
         print("4. Mostrar Asistencia")
-        print("5. Dar de Baja Estudiante")
-        print("6. Contar Estudiantes Vigentes")
-        print("7. Calcular Inasistencia de un Estudiante")
-        print("8. Salir")
+        print("5. Buscar Estudiantes")
+        print("6. Dar de Baja Estudiante")
+        print("7. Contar Estudiantes Vigentes")
+        print("8. Calcular Inasistencia de un Estudiante")
+        print("9. Salir")
         
         opcion = input("Seleccione una opción: ")
 
         if opcion == '1':
-            nombre_estudiante = input("Ingrese el nombre del estudiante: ")
-            estudiantes, asistencia = agregar_estudiante(estudiantes, sesiones, asistencia, nombre_estudiante)
+            nombre = input("Ingrese el nombre del estudiante: ")
+            email = input("Ingrese el correo electrónico del estudiante: ")
+            agregar_estudiante(estudiantes, nombre, email)
+
         elif opcion == '2':
-            nombre_sesion = input("Ingrese el nombre de la sesión: ")
-            sesiones, asistencia = agregar_sesion(sesiones, asistencia, nombre_sesion)
+            sesion = input("Ingrese el nombre de la sesión: ")
+            agregar_sesion(sesiones, sesion)
+
         elif opcion == '3':
-            if not estudiantes or not sesiones:
-                print("Debe haber al menos un estudiante y una sesión para registrar asistencia.")
-                continue
-            for idx, est in enumerate(estudiantes):
-                print(f"{idx}: {est['nombre']}")
-            estudiante_index = int(input(f"Ingrese el índice del estudiante (0 a {len(estudiantes) - 1}): "))
-            for idx, ses in enumerate(sesiones):
-                print(f"{idx}: {ses}")
-            sesion_index = int(input(f"Ingrese el índice de la sesión (0 a {len(sesiones) - 1}): "))
-            asistencia = registrar_asistencia(estudiantes, sesiones, asistencia, estudiante_index, sesion_index)
+            if not asistencia:  # Inicializar asistencia si está vacía
+                asistencia = inicializar_asistencia(sesiones, estudiantes)
+            mostrar_asistencia(estudiantes, sesiones, asistencia)  # Mostrar asistencia antes de registrar
+            estudiante_index = int(input("Ingrese el índice del estudiante (0 para el primero): "))
+            sesion_index = int(input("Ingrese el índice de la sesión (0 para la primera): "))
+            registrar_asistencia(asistencia, estudiante_index, sesion_index)
+
         elif opcion == '4':
             mostrar_asistencia(estudiantes, sesiones, asistencia)
+
         elif opcion == '5':
+            nombre_busqueda = input("Ingrese el nombre a buscar: ")
+            resultados_busqueda = buscar_estudiantes_por_nombre(estudiantes, nombre_busqueda)
+            print("Resultados de búsqueda:")
+            for estudiante in resultados_busqueda:
+                print(estudiante["nombre"])
+        elif opcion == '6':
             if not estudiantes:
                 print("No hay estudiantes para dar de baja.")
                 continue
@@ -144,10 +121,10 @@ def main():
                 print(f"{idx}: {est['nombre']}")
             estudiante_index = int(input(f"Ingrese el índice del estudiante a dar de baja (0 a {len(estudiantes) - 1}): "))
             estudiantes = dar_de_baja_usuario(estudiantes, estudiante_index)
-        elif opcion == '6':
+        elif opcion == '7':
             vigentes = contar_usuarios_vigentes(estudiantes)
             print(f"Cantidad de estudiantes vigentes: {vigentes}")
-        elif opcion == '7':
+        elif opcion == '8':
             if not estudiantes or not sesiones:
                 print("Debe haber al menos un estudiante y sesiones para calcular inasistencia.")
                 continue
@@ -155,11 +132,11 @@ def main():
                 print(f"{idx}: {est['nombre']}")
             estudiante_index = int(input(f"Ingrese el índice del estudiante (0 a {len(estudiantes) - 1}): "))
             calcular_inasistencia_estudiante(estudiantes, sesiones, asistencia, estudiante_index)
-        elif opcion == '8':
-            print("Saliendo del sistema.")
+        elif opcion == '9':
+            print("Saliendo del programa.")
             break
+
         else:
             print("Opción no válida. Intente de nuevo.")
-
-if __name__ == "__main__":
-    main()
+if __name__ == '__main__':
+    menu()
