@@ -94,6 +94,7 @@ def mostrar_lista_estudiantes(lista):
     print('lista de estudiantes')
     for dic in lista:
         print(dic)
+        print(dic.values())
         for clave,valor in dic.items():
             print(f'{clave:10} {valor:10}')
 
