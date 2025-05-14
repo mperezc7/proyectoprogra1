@@ -1,7 +1,4 @@
 from datetime import datetime
-def inicializar_asistencia(sesiones,estudiantes):
-    return [[0] * len(sesiones) for _ in range(len(estudiantes))]
-
 def agregar_estudiante(estudiantes, sesiones, asistencia, nombre):
     estudiante = {"nombre": nombre, "fecha_baja": None, "justificacion_baja": None}
     estudiantes.append(estudiante)

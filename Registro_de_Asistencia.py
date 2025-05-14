@@ -1,7 +1,7 @@
 from datetime import datetime
 from .estudiantes import agregar_estudiante, buscar_estudiantes_por_nombre
 from .sesiones import agregar_sesion
-from .asistencia import inicializar_asistencia, registrar_asistencia
+from .asistencia import registrar_asistencia
 def dar_de_baja_usuario(estudiantes, estudiante_index):
     if estudiante_index < 0 or estudiante_index >= len(estudiantes):
         print("Índice de estudiante no válido.")
@@ -17,7 +17,8 @@ def dar_de_baja_usuario(estudiantes, estudiante_index):
         print(f"Estudiante '{estudiante['nombre']}' dado de baja correctamente en {estudiante['fecha_baja']}.")
     
     return estudiantes
-
+def obtener_fecha():
+    return datetime.now()
 def contar_usuarios_vigentes(estudiantes):
     ahora = datetime.now()
     cantidad_vigentes = 0
