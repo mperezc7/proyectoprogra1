@@ -1,6 +1,5 @@
 from datetime import datetime
 
-
 def agregar_sesion(sesiones, asistencia, sesion):
     sesiones.append(sesion)
     for fila in asistencia:
@@ -107,7 +106,7 @@ def main():
     while True:
         print("\n----- MENÚ -----")
         print("1. Agregar Estudiante")
-        print("2. Agregar Sesión")
+        print("2. Agregar Clases")
         print("3. Registrar Asistencia")
         print("4. Mostrar Asistencia")
         print("5. Dar de Baja Estudiante")
