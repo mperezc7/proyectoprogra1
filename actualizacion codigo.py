@@ -90,6 +90,14 @@ def calcular_inasistencia_estudiante(estudiantes, sesiones, asistencia, estudian
     print(f"Inasistencia: {porcentaje_inasistencia:.2f}% ({cantidad_ausencias} ausencias de {total_sesiones} sesiones)")
 
     return porcentaje_inasistencia
+def mostrar_lista_estudiantes(lista):
+    print('lista de estudiantes')
+    for dic in lista:
+        print(dic)
+        for clave,valor in dic.items():
+            print(f'{clave:10} {valor:10}')
+
+
 
 def mostrar_asistencia(estudiantes, sesiones, asistencia):
     print("\nAsistencia:")
@@ -111,13 +119,13 @@ def main():
     while True:
         print("\n----- MENÚ -----")
         print("1. Agregar Estudiante")
-        print("2. Agregar Sesión")
+        print("2. Agregar Clases")
         print("3. Registrar Asistencia")
         print("4. Mostrar Asistencia")
         print("5. Dar de Baja Estudiante")
         print("6. Contar Estudiantes Vigentes")
         print("7. Calcular Inasistencia de un Estudiante")
-        print("8. modificacion 1")
+        print("8. Mostrar lista de estudiantes")
         print("9. Salir")
         
         opcion = input("Seleccione una opción: ")
@@ -126,7 +134,7 @@ def main():
             nombre_legajo = input("Ingrese el nombre del estudiante/legajo: ")
             estudiantes, asistencia = agregar_estudiante(estudiantes, sesiones, asistencia, nombre_legajo)
         elif opcion == '2':
-            nombre_sesion = input("Ingrese el nombre de la sesión: ")
+            nombre_sesion = input("Ingrese el nombre de la clase: ")
             sesiones, asistencia = agregar_sesion(sesiones, asistencia, nombre_sesion)
         elif opcion == '3':
             if not estudiantes or not sesiones:
@@ -160,6 +168,9 @@ def main():
                 print(f"{idx}: {est['nombre']}")
             estudiante_index = int(input(f"Ingrese el índice del estudiante (0 a {len(estudiantes) - 1}): "))
             calcular_inasistencia_estudiante(estudiantes, sesiones, asistencia, estudiante_index)
+        elif opcion == '8':
+            mostrar_lista_estudiantes(estudiantes)
+        
         elif opcion == '9':
             print("Saliendo del sistema.")
             break
