@@ -1,15 +1,5 @@
 from datetime import datetime
-def agregar_estudiante(estudiantes, sesiones, asistencia, dato1):
-    if dato1.isalnum:
-        legajo=dato1
-    elif dato1.isalpha:
-        nombre=dato1
-        
-    estudiante = {'legajo': legajo,"nombre": nombre,'correo':None ,"fecha_baja": None}
-    estudiantes.append(estudiante)
-    asistencia.append([0] * len(sesiones))
-    print(f"Estudiante '{nombre}' agregado.")
-    return estudiantes, asistencia
+
 
 def agregar_sesion(sesiones, asistencia, sesion):
     sesiones.append(sesion)
@@ -90,7 +80,13 @@ def calcular_inasistencia_estudiante(estudiantes, sesiones, asistencia, estudian
     print(f"Inasistencia: {porcentaje_inasistencia:.2f}% ({cantidad_ausencias} ausencias de {total_sesiones} sesiones)")
 
     return porcentaje_inasistencia
-
+def mostrar_lista_estudiantes(lista):
+    print('lista de estudiantes')
+    for dic in lista:
+        print(dic)
+        print(dic.values())
+        for clave,valor in dic.items():
+            print(f'{clave:10} {valor:10}')
 def mostrar_asistencia(estudiantes, sesiones, asistencia):
     print("\nAsistencia:")
     print("Estudiantes:", [e["nombre"] for e in estudiantes])
@@ -117,7 +113,7 @@ def main():
         print("5. Dar de Baja Estudiante")
         print("6. Contar Estudiantes Vigentes")
         print("7. Calcular Inasistencia de un Estudiante")
-        print("8. modificacion 1")
+        print("8. Mostrar lista de estudiantes")
         print("9. Salir")
         
         opcion = input("Seleccione una opción: ")
@@ -194,6 +190,8 @@ def main():
                 print(f"{idx}: {est['nombre']}")
             estudiante_index = int(input(f"Ingrese el índice del estudiante (0 a {len(estudiantes) - 1}): "))
             calcular_inasistencia_estudiante(estudiantes, sesiones, asistencia, estudiante_index)
+        elif opcion == '8':
+            mostrar_lista_estudiantes(estudiantes)
         elif opcion == '9':
             print("Saliendo del sistema.")
             break
