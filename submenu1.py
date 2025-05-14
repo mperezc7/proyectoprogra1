@@ -1,15 +1,4 @@
 from datetime import datetime
-def agregar_estudiante(estudiantes, sesiones, asistencia, dato1):
-    if dato1.isalnum:
-        legajo=dato1
-    elif dato1.isalpha:
-        nombre=dato1
-        
-    estudiante = {'legajo': legajo,"nombre": nombre,'correo':None ,"fecha_baja": None}
-    estudiantes.append(estudiante)
-    asistencia.append([0] * len(sesiones))
-    print(f"Estudiante '{nombre}' agregado.")
-    return estudiantes, asistencia
 
 def agregar_sesion(sesiones, asistencia, sesion):
     sesiones.append(sesion)
@@ -122,43 +111,136 @@ def main():
         
         opcion = input("Seleccione una opción: ")
         if opcion == '1':
-           print("\n--- Submenú: Agregar Estudiante ---")
-           nombre = ""
-           legajo = ""
-           correo = ""
-           while True:
-               print("\n--- Opciones de ingreso ---")
-               print("1. Ingresar nombre del estudiante")
-               print("2. Ingresar legajo del estudiante")
-               print("3. Ingresar correo del estudiante")
-               print("4. Guardar estudiante")
-               print("5. Cancelar")
-               subopcion = input("Seleccione una opción: ")
-               if subopcion == '1':
-                   nombre = input("Ingrese el nombre del estudiante: ")
-               elif subopcion == '2':
-                   legajo = input("Ingrese el legajo del estudiante: ")
-               elif subopcion == '3':
-                   correo = input("Ingrese el correo del estudiante: ")
-               elif subopcion == '4':
-                   if not (nombre and legajo and correo):
-                       print("Faltan datos. Asegúrese de ingresar nombre, legajo y correo.")
-                   else:
-                       estudiante = {
-                           "legajo": legajo,
-                           "nombre": nombre,
-                           "correo": correo,
-                           "fecha_baja": None
-                       }
-                       estudiantes.append(estudiante)
-                       asistencia.append([0] * len(sesiones))
-                       print(f"Estudiante '{nombre}' agregado correctamente.")
-                       break
-               elif subopcion == '5':
-                   print("Operación cancelada.")
-                   break
-               else:
-                   print("Opción no válida. Intente de nuevo.")
+
+            print("\n--- Submenú: Agregar Estudiante ---")
+
+            nombre = ""
+
+            legajo = ""
+
+            correo = ""
+
+            while True:
+
+                print("\n--- Opciones de ingreso ---")
+
+                print("1. Ingresar nombre del estudiante")
+
+                print("2. Ingresar legajo del estudiante")
+
+                print("3. Ingresar correo del estudiante")
+
+                print("4. Guardar estudiante")
+
+                print("5. Cancelar")
+
+                subopcion = input("Seleccione una opción: ")
+
+                if subopcion == '1':
+
+                    nuevo_nombre = input("Ingrese el nombre del estudiante: ")
+
+                    nombre_duplicado = False
+
+                    for est in estudiantes:
+
+                        if est["nombre"].lower() == nuevo_nombre.lower():
+
+                            nombre_duplicado = True
+
+                            break
+
+                    if nombre_duplicado:
+
+                        print("Error, nombre ya registrado en el sistema.")
+
+                    else:
+
+                        nombre = nuevo_nombre
+
+                elif subopcion == '2':
+
+                    nuevo_legajo = input("Ingrese el legajo del estudiante: ")
+
+                    legajo_duplicado = False
+
+                    for est in estudiantes:
+
+                        if str(est["legajo"]) == nuevo_legajo:
+
+                            legajo_duplicado = True
+
+                            break
+
+                    if legajo_duplicado:
+
+                        print("Error, legajo ya registrado en el sistema.")
+
+                    else:
+
+                        legajo = nuevo_legajo
+
+                elif subopcion == '3':
+
+                    nuevo_correo = input("Ingrese el correo del estudiante: ")
+
+                    correo_duplicado = False
+
+                    for est in estudiantes:
+
+                        if est["correo"].lower() == nuevo_correo.lower():
+
+                            correo_duplicado = True
+
+                            break
+
+                    if correo_duplicado:
+
+                        print("Error, correo ya registrado en el sistema.")
+
+                    else:
+
+                        correo = nuevo_correo
+
+                elif subopcion == '4':
+
+                    if not (nombre and legajo and correo):
+
+                        print("Faltan datos. Asegúrese de ingresar nombre, legajo y correo.")
+
+                    else:
+
+                        estudiante = {
+
+                            "legajo": legajo,
+
+                            "nombre": nombre,
+
+                            "correo": correo,
+
+                            "fecha_baja": None
+
+                        }
+
+                        estudiantes.append(estudiante)
+
+                        asistencia.append([0] * len(sesiones))
+
+                        print(f"Estudiante '{nombre}' agregado correctamente.")
+
+                        break
+
+                elif subopcion == '5':
+
+                    print("Operación cancelada.")
+
+                    break
+
+                else:
+
+                    print("Opción no válida. Intente de nuevo.")
+ 
+ 
         elif opcion == '2':
             nombre_sesion = input("Ingrese el nombre de la sesión: ")
             sesiones, asistencia = agregar_sesion(sesiones, asistencia, nombre_sesion)
