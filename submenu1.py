@@ -79,13 +79,18 @@ def calcular_inasistencia_estudiante(estudiantes, sesiones, asistencia, estudian
     print(f"Inasistencia: {porcentaje_inasistencia:.2f}% ({cantidad_ausencias} ausencias de {total_sesiones} sesiones)")
 
     return porcentaje_inasistencia
-def mostrar_lista_estudiantes(lista):
-    print('lista de estudiantes')
+def dic_a_matriz(lista):
+    m=[]
     for dic in lista:
-        print(dic)
-        print(dic.values())
-        for clave,valor in dic.items():
-            print(f'{clave:10} {valor:10}')
+        m.append(list(dic.values()))
+    return m
+def mostrar_lista_estudiantes(matriz):
+    for i in range (len(matriz)):
+        for j in range(len(matriz[i])):
+            a=matriz[i][j]
+            a=str(a)
+            print(f'{a:<20}', end=' ')
+        print()
 def mostrar_asistencia(estudiantes, sesiones, asistencia):
     print("\nAsistencia:")
     print("Estudiantes:", [e["nombre"] for e in estudiantes])
@@ -97,10 +102,11 @@ def mostrar_asistencia(estudiantes, sesiones, asistencia):
         print()
 
 def main():
-    estudiantes = [{'legajo':11111, 'nombre':'leo Castillo','correo':'abc1@gmail.edu.ar'},
-                   {'legajo':11112, 'nombre':'caro Casto','correo':'abc2@gmail.edu.ar'},
-                   {'legajo':11113, 'nombre':'andres julio','correo':'abc3@gmail.edu.ar'}]
-    sesiones = []
+    estudiantes = [{'legajo':11111, 'nombre':'leo Castillo','correo':'abc1@gmail.edu.ar','materias':['fisica', 'progra1']},
+                   {'legajo':11112, 'nombre':'caro Casto','correo':'abc2@gmail.edu.ar','materias':['progra1']},
+                   {'legajo':11113, 'nombre':'andres julio','correo':'abc3@gmail.edu.ar','materias':None}]
+    materias = ['proga1']
+    Nclases=['cl1','cl2']
     asistencia = []
 
     while True:
@@ -155,8 +161,8 @@ def main():
                else:
                    print("Opción no válida. Intente de nuevo.")
         elif opcion == '2':
-            nombre_sesion = input("Ingrese el nombre de la sesión: ")
-            sesiones, asistencia = agregar_sesion(sesiones, asistencia, nombre_sesion)
+            nombre_clase = input("Ingrese el nombre de la clase: ")
+            sesiones, asistencia = agregar_sesion(sesiones, asistencia, nombre_clase)
         elif opcion == '3':
             if not estudiantes or not sesiones:
                 print("Debe haber al menos un estudiante y una sesión para registrar asistencia.")
@@ -190,7 +196,11 @@ def main():
             estudiante_index = int(input(f"Ingrese el índice del estudiante (0 a {len(estudiantes) - 1}): "))
             calcular_inasistencia_estudiante(estudiantes, sesiones, asistencia, estudiante_index)
         elif opcion == '8':
-            mostrar_lista_estudiantes(estudiantes)
+            matriz=dic_a_matriz(estudiantes)
+            for i in list(estudiantes[0]):
+                print(f'{i:<20}',end=" ")
+            print()
+            mostrar_lista_estudiantes(matriz)
         elif opcion == '9':
             print("Saliendo del sistema.")
             break
