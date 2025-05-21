@@ -80,6 +80,20 @@ def calcular_inasistencia_estudiante(estudiantes, sesiones, asistencia, estudian
 
     return porcentaje_inasistencia
 
+def dic_a_matriz(lista):
+    m=[]
+    for dic in lista:
+        m.append(list(dic.values()))
+    return m
+
+def mostrar_lista_estudiantes(matriz):
+    for i in range (len(matriz)):
+        for j in range(len(matriz[i])):
+            a=matriz[i][j]
+            a=str(a)
+            print(f'{a:<20}', end=' ')
+        print()
+        
 def mostrar_asistencia(estudiantes, sesiones, asistencia):
     print("\nAsistencia:")
     print("Estudiantes:", [e["nombre"] for e in estudiantes])
@@ -89,161 +103,99 @@ def mostrar_asistencia(estudiantes, sesiones, asistencia):
         for j in range(len(sesiones)):
             print("P" if asistencia[i][j] == 1 else "A", end=" ")
         print()
+        
+def submenu(estudiantes, asistencia):
+    nombre = ""
+    legajo = ""
+    correo = ""
+    finalizar = False
 
+    def es_duplicado(campo, valor):
+        return any(str(est[campo]).title() == str(valor).title() for est in estudiantes)
+
+    while not finalizar:
+        print("--- Opciones de ingreso ---")
+        print("1. Ingresar nombre del estudiante")
+        print("2. Ingresar legajo del estudiante")
+        print("3. Ingresar correo del estudiante")
+        print("4. Guardar estudiante")
+        print("5. Cancelar")
+
+        try:
+            subopcion = input("Seleccione una opción: ").strip()
+            assert subopcion in {'1', '2', '3', '4', '5'}, "Opción inválida."
+
+            if subopcion == '1':
+                nuevo_nombre = input("Ingrese el nombre del estudiante: ").strip()
+                assert nuevo_nombre, "El nombre no puede estar vacío."
+                assert not es_duplicado("nombre", nuevo_nombre), "Nombre ya registrado."
+                nombre = nuevo_nombre
+
+            elif subopcion == '2':
+                nuevo_legajo = input("Ingrese el legajo del estudiante: ").strip()
+                assert nuevo_legajo.isdigit(), "El legajo debe ser numérico."
+                assert not es_duplicado("legajo", nuevo_legajo), "Legajo ya registrado."
+                legajo = int(nuevo_legajo)
+
+            elif subopcion == '3':
+                nuevo_correo = input("Ingrese el correo del estudiante: ").strip()
+                assert "@" in nuevo_correo and "." in nuevo_correo, "Correo no válido."
+                assert not es_duplicado("correo", nuevo_correo), "Correo ya registrado."
+                correo = nuevo_correo
+
+            elif subopcion == '4':
+                assert nombre and legajo and correo, "Faltan datos. Complete nombre, legajo y correo."
+                estudiante = {
+                    "legajo": legajo,
+                    "nombre": nombre,
+                    "correo": correo, 
+                    "materias": None,
+                    "fecha_baja": None,
+                    
+                    
+                }
+                estudiantes.append(estudiante)
+                print(f"Estudiante '{nombre}' agregado correctamente.")
+                finalizar = True
+
+            elif subopcion == '5':
+                print("Operación cancelada.")
+                finalizar = True
+
+        except AssertionError as error:
+            print(f"Error: {error}")
+        except Exception as e:
+            print(f"Ocurrió un error inesperado: {e}")
+            
 def main():
-    estudiantes = [{'legajo':11111, 'nombre':'leo Castillo','correo':'abc1@gmail.edu.ar'},
-                   {'legajo':11112, 'nombre':'caro Casto','correo':'abc2@gmail.edu.ar'},
-                   {'legajo':11113, 'nombre':'andres julio','correo':'abc3@gmail.edu.ar'}]
-    sesiones = []
+    estudiantes = [{'legajo':11111, 'nombre':'leo Castillo','correo':'abc1@gmail.edu.ar','materias':['fisica', 'progra1']},
+                   {'legajo':11112, 'nombre':'caro Casto','correo':'abc2@gmail.edu.ar','materias':['progra1']},
+                   {'legajo':11113, 'nombre':'andres julio','correo':'abc3@gmail.edu.ar','materias':None}]
+    materias = ['proga1']
+    Nclases=['cl1','cl2']
     asistencia = []
 
     while True:
         print("\n----- MENÚ -----")
         print("1. Agregar Estudiante")
-        print("2. Agregar Sesión")
+        print("2. Agregar Clases")
         print("3. Registrar Asistencia")
         print("4. Mostrar Asistencia")
         print("5. Dar de Baja Estudiante")
         print("6. Contar Estudiantes Vigentes")
         print("7. Calcular Inasistencia de un Estudiante")
-        print("8. modificacion 1")
+        print("8. Mostrar lista de estudiantes")
         print("9. Salir")
         
         opcion = input("Seleccione una opción: ")
         if opcion == '1':
 
             print("\n--- Submenú: Agregar Estudiante ---")
+            submenu(estudiantes,asistencia)
 
-            nombre = ""
-
-            legajo = ""
-
-            correo = ""
-
-            while True:
-
-                print("\n--- Opciones de ingreso ---")
-
-                print("1. Ingresar nombre del estudiante")
-
-                print("2. Ingresar legajo del estudiante")
-
-                print("3. Ingresar correo del estudiante")
-
-                print("4. Guardar estudiante")
-
-                print("5. Cancelar")
-
-                subopcion = input("Seleccione una opción: ")
-
-                if subopcion == '1':
-
-                    nuevo_nombre = input("Ingrese el nombre del estudiante: ")
-
-                    nombre_duplicado = False
-
-                    for est in estudiantes:
-
-                        if est["nombre"].lower() == nuevo_nombre.lower():
-
-                            nombre_duplicado = True
-
-                            break
-
-                    if nombre_duplicado:
-
-                        print("Error, nombre ya registrado en el sistema.")
-
-                    else:
-
-                        nombre = nuevo_nombre
-
-                elif subopcion == '2':
-
-                    nuevo_legajo = input("Ingrese el legajo del estudiante: ")
-
-                    legajo_duplicado = False
-
-                    for est in estudiantes:
-
-                        if str(est["legajo"]) == nuevo_legajo:
-
-                            legajo_duplicado = True
-
-                            break
-
-                    if legajo_duplicado:
-
-                        print("Error, legajo ya registrado en el sistema.")
-
-                    else:
-
-                        legajo = nuevo_legajo
-
-                elif subopcion == '3':
-
-                    nuevo_correo = input("Ingrese el correo del estudiante: ")
-
-                    correo_duplicado = False
-
-                    for est in estudiantes:
-
-                        if est["correo"].lower() == nuevo_correo.lower():
-
-                            correo_duplicado = True
-
-                            break
-
-                    if correo_duplicado:
-
-                        print("Error, correo ya registrado en el sistema.")
-
-                    else:
-
-                        correo = nuevo_correo
-
-                elif subopcion == '4':
-
-                    if not (nombre and legajo and correo):
-
-                        print("Faltan datos. Asegúrese de ingresar nombre, legajo y correo.")
-
-                    else:
-
-                        estudiante = {
-
-                            "legajo": legajo,
-
-                            "nombre": nombre,
-
-                            "correo": correo,
-
-                            "fecha_baja": None
-
-                        }
-
-                        estudiantes.append(estudiante)
-
-                        asistencia.append([0] * len(sesiones))
-
-                        print(f"Estudiante '{nombre}' agregado correctamente.")
-
-                        break
-
-                elif subopcion == '5':
-
-                    print("Operación cancelada.")
-
-                    break
-
-                else:
-
-                    print("Opción no válida. Intente de nuevo.")
- 
- 
         elif opcion == '2':
-            nombre_sesion = input("Ingrese el nombre de la sesión: ")
-            sesiones, asistencia = agregar_sesion(sesiones, asistencia, nombre_sesion)
+            nombre_clase = input("Ingrese el nombre de la clase: ")
+            sesiones, asistencia = agregar_sesion(sesiones, asistencia, nombre_clase)
         elif opcion == '3':
             if not estudiantes or not sesiones:
                 print("Debe haber al menos un estudiante y una sesión para registrar asistencia.")
@@ -276,6 +228,12 @@ def main():
                 print(f"{idx}: {est['nombre']}")
             estudiante_index = int(input(f"Ingrese el índice del estudiante (0 a {len(estudiantes) - 1}): "))
             calcular_inasistencia_estudiante(estudiantes, sesiones, asistencia, estudiante_index)
+        elif opcion == '8':
+            matriz=dic_a_matriz(estudiantes)
+            for i in list(estudiantes[0]):
+                print(f'{i:<20}',end=" ")
+            print()
+            mostrar_lista_estudiantes(matriz)
         elif opcion == '9':
             print("Saliendo del sistema.")
             break
@@ -284,3 +242,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+  
