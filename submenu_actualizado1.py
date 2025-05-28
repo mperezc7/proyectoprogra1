@@ -79,19 +79,11 @@ def calcular_inasistencia_estudiante(estudiantes, sesiones, asistencia, estudian
     print(f"Inasistencia: {porcentaje_inasistencia:.2f}% ({cantidad_ausencias} ausencias de {total_sesiones} sesiones)")
 
     return porcentaje_inasistencia
-<<<<<<< HEAD:submenu_actualizado1.py
-
-=======
->>>>>>> 1cefc8550dc62a49020b5521fe296ec7027bb7f8:submenu1.py
 def dic_a_matriz(lista):
     m=[]
     for dic in lista:
         m.append(list(dic.values()))
     return m
-<<<<<<< HEAD:submenu_actualizado1.py
-
-=======
->>>>>>> 1cefc8550dc62a49020b5521fe296ec7027bb7f8:submenu1.py
 def mostrar_lista_estudiantes(matriz):
     for i in range (len(matriz)):
         for j in range(len(matriz[i])):
@@ -99,10 +91,6 @@ def mostrar_lista_estudiantes(matriz):
             a=str(a)
             print(f'{a:<20}', end=' ')
         print()
-<<<<<<< HEAD:submenu_actualizado1.py
-        
-=======
->>>>>>> 1cefc8550dc62a49020b5521fe296ec7027bb7f8:submenu1.py
 def mostrar_asistencia(estudiantes, sesiones, asistencia):
     print("\nAsistencia:")
     print("Estudiantes:", [e["nombre"] for e in estudiantes])
@@ -112,34 +100,43 @@ def mostrar_asistencia(estudiantes, sesiones, asistencia):
         for j in range(len(sesiones)):
             print("P" if asistencia[i][j] == 1 else "A", end=" ")
         print()
-<<<<<<< HEAD:submenu_actualizado1.py
-        
-def submenu(estudiantes, asistencia):
+
+def archivo(matriz):
+    try:
+        arch=open('estud_matriz.txt','wt',encoding='UTF8')
+        #mostrar_lista_estudiantes(estudiantes)
+        for est in matriz:
+            linea=[f"{legajo};{nombre};{correo};{materias}\n"for legajo,nombre,correo,materias in est]
+        #cad=arch.readline()
+            arch.write(str(linea)+'\n')
+
+    except FileNotFoundError:
+        print("El arcrhivo no existe")
+    except OSError:
+        print("ERROR,No se puede abrir el archivo")
+    finally:
+        try:
+            arch.close()
+        except NameError:
+            pass
+
+def es_duplicado(campo, valor,estudiantes):
+        return any(str(est[campo]).title() == str(valor).title() for est in estudiantes)
+
+def submenu(estudiantes):
     nombre = ""
     legajo = ""
     correo = ""
     finalizar = False
 
-    def es_duplicado(campo, valor):
-        return any(str(est[campo]).title() == str(valor).title() for est in estudiantes)
-
     while not finalizar:
         print("--- Opciones de ingreso ---")
-=======
-def submenu(estudiantes,sesiones,asistencia):
-    nombre = ""
-    legajo = ""
-    correo = ""
-    while True:
         print("\n--- Opciones de ingreso ---")
->>>>>>> 1cefc8550dc62a49020b5521fe296ec7027bb7f8:submenu1.py
         print("1. Ingresar nombre del estudiante")
         print("2. Ingresar legajo del estudiante")
         print("3. Ingresar correo del estudiante")
         print("4. Guardar estudiante")
         print("5. Cancelar")
-<<<<<<< HEAD:submenu_actualizado1.py
-
         try:
             subopcion = input("Seleccione una opción: ").strip()
             assert subopcion in {'1', '2', '3', '4', '5'}, "Opción inválida."
@@ -148,7 +145,7 @@ def submenu(estudiantes,sesiones,asistencia):
                 nuevo_nombre = input("Ingrese el nombre del estudiante: ").strip()
                 assert nuevo_nombre, "El nombre no puede estar vacío."
                 assert not es_duplicado("nombre", nuevo_nombre), "Nombre ya registrado."
-                nombre = nuevo_nombre
+                nombre = nuevo_nombre.istitle()
 
             elif subopcion == '2':
                 nuevo_legajo = input("Ingrese el legajo del estudiante: ").strip()
@@ -186,65 +183,12 @@ def submenu(estudiantes,sesiones,asistencia):
         except Exception as e:
             print(f"Ocurrió un error inesperado: {e}")
             
-=======
-        subopcion = input("Seleccione una opción: ")
-        if subopcion == '1':
-            nuevo_nombre = input("Ingrese el nombre del estudiante: ")
-            nombre_duplicado = False
-            for est in estudiantes:
-                if est["nombre"].lower() == nuevo_nombre.lower():
-                    nombre_duplicado = True
-                    break
-            if nombre_duplicado:
-                print("Error, nombre ya registrado en el sistema.")
-            else:
-                nombre = nuevo_nombre
-        elif subopcion == '2':
-            nuevo_legajo = input("Ingrese el legajo del estudiante: ")
-            legajo_duplicado = False
-            for est in estudiantes:
-                if str(est["legajo"]) == nuevo_legajo:
-                    legajo_duplicado = True
-                    break
-            if legajo_duplicado:
-                print("Error, legajo ya registrado en el sistema.")
-            else:
-                legajo = nuevo_legajo
-        elif subopcion == '3':
-            nuevo_correo = input("Ingrese el correo del estudiante: ")
-            correo_duplicado = False
-            for est in estudiantes:
-                if est["correo"].lower() == nuevo_correo.lower():
-                    correo_duplicado = True
-                    break
-            if correo_duplicado:
-                print("Error, correo ya registrado en el sistema.")
-            else:
-                correo = nuevo_correo
-        elif subopcion == '4':
-            if not (nombre and legajo and correo):
-                print("Faltan datos. Asegúrese de ingresar nombre, legajo y correo.")
-            else:
-                estudiante = {
-                    "legajo": legajo,
-                    "nombre": nombre,
-                    "correo": correo,
-                    "fecha_baja": None
-                }
-                estudiantes.append(estudiante)
-                asistencia.append([0] * len(sesiones))
-                print(f"Estudiante '{nombre}' agregado correctamente.")
-                break
-        elif subopcion == '5':
-            print("Operación cancelada.")
-            break
-        else:
-            print("Opción no válida. Intente de nuevo.")
->>>>>>> 1cefc8550dc62a49020b5521fe296ec7027bb7f8:submenu1.py
+
+
 def main():
-    estudiantes = [{'legajo':11111, 'nombre':'leo Castillo','correo':'abc1@gmail.edu.ar','materias':['fisica', 'progra1']},
-                   {'legajo':11112, 'nombre':'caro Casto','correo':'abc2@gmail.edu.ar','materias':['progra1']},
-                   {'legajo':11113, 'nombre':'andres julio','correo':'abc3@gmail.edu.ar','materias':None}]
+    estudiantes = [{'legajo':11111, 'nombre':'leo Castillo','correo':'abc1@gmail.edu.ar','materias':['fisica', 'progra1'],'fecha_baja':None},
+                   {'legajo':11112, 'nombre':'caro Casto','correo':'abc2@gmail.edu.ar','materias':['progra1'],'fecha_baja':None},
+                   {'legajo':11113, 'nombre':'andres julio','correo':'abc3@gmail.edu.ar','materias':None,'fecha_baja':None}]
     materias = ['proga1']
     Nclases=['cl1','cl2']
     asistencia = []
@@ -265,11 +209,8 @@ def main():
         if opcion == '1':
 
             print("\n--- Submenú: Agregar Estudiante ---")
-<<<<<<< HEAD:submenu_actualizado1.py
+
             submenu(estudiantes,asistencia)
-=======
-            submenu(estudiantes,sesiones,asistencia)
->>>>>>> 1cefc8550dc62a49020b5521fe296ec7027bb7f8:submenu1.py
 
         elif opcion == '2':
             nombre_clase = input("Ingrese el nombre de la clase: ")
@@ -312,6 +253,7 @@ def main():
                 print(f'{i:<20}',end=" ")
             print()
             mostrar_lista_estudiantes(matriz)
+            archivo(matriz)
         elif opcion == '9':
             print("Saliendo del sistema.")
             break
@@ -320,7 +262,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-<<<<<<< HEAD:submenu_actualizado1.py
-  
-=======
->>>>>>> 1cefc8550dc62a49020b5521fe296ec7027bb7f8:submenu1.py
