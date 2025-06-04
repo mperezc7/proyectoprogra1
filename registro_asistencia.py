@@ -81,12 +81,14 @@ def mostrar_lista_estudiantes(matriz):
 
 def mostrar_asistencia(estudiantes, sesiones, asistencia):
     print("\nAsistencia:")
-    print("Estudiantes:", [e["nombre"] for e in estudiantes])
-    print("Sesiones:", sesiones)
+    print(f"{'':<20}",end=' ')
+    for s in sesiones:
+        print(f"{s:<7}",end=' ')
+    print()
     for i, est in enumerate(estudiantes):
-        print(f"{est['nombre']}: ", end="")
+        print(f"{est['nombre']:<20}: ", end="")
         for j in range(len(sesiones)):
-            print("P" if asistencia[i][j] == 1 else "A", end=" ")
+            print("P".ljust(7," ") if asistencia[i][j] == 1 else "A".ljust(7,' '), end=" ")
         print()
 
 def archivo(matriz):
