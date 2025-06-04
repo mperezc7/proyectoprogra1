@@ -123,6 +123,7 @@ def archivo(matriz):
 def es_duplicado(campo, valor,estudiantes):
         return any(str(est[campo]).title() == str(valor).title() for est in estudiantes)
 
+2
 def submenu(estudiantes):
     nombre = ""
     legajo = ""
@@ -221,7 +222,7 @@ def main():
                 continue
             for idx, est in enumerate(estudiantes):
                 print(f"{idx}: {est['nombre']}")
-            estudiante_index = int(input(f"Ingrese el índice del estudiante (0 a {len(estudiantes) - 1}): "))
+            estudiante_index =int(input(f"Ingrese el índice del estudiante (0 a {len(estudiantes) - 1}): "))
             for idx, ses in enumerate(sesiones):
                 print(f"{idx}: {ses}")
             sesion_index = int(input(f"Ingrese el índice de la sesión (0 a {len(sesiones) - 1}): "))
@@ -261,4 +262,4 @@ def main():
             print("Opción no válida. Intente de nuevo.")
 
 if __name__ == "__main__":
-    main()
+    main() 
