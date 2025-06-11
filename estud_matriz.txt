@@ -1,0 +1,3 @@
+11113;andres julio;abc3@gmail.edu.ar;None;None
+11112;caro Casto;abc2@gmail.edu.ar;['progra1'];None
+11111;leo Castillo;abc1@gmail.edu.ar;['fisica', 'progra1'];None

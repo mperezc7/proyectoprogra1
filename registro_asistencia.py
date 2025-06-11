@@ -317,10 +317,10 @@ def menu_estudiantes(estudiantes, asistencia):
 def encabezado_fech(sesiones,materias_fech,m):
     n=len(sesiones)-1
     if m in materias_fech:
-        fechas = materias_fech[m]  # Obtener la lista de fechas
-        # Asegurarse de que n no exceda el índice de fechas
+        fechas = materias_fech[m]
+        
         if n < len(fechas):
-            print(f'{m:<20} {fechas[n].strip():>20}')  # Usar .strip() para eliminar espacios
+            print(f'{m:<20} {fechas[n].strip():>20}') 
         else:
             print(f'No hay fecha para la sesión {n} de la materia {m}')
     else:

@@ -1,0 +1,9 @@
+[
+    {
+        "legajo": 1,
+        "nombre": "Test Alumno",
+        "correo": "test@uade.edu.ar",
+        "materias": [],
+        "fecha_baja": null
+    }
+]
