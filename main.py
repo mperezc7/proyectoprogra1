@@ -1,6 +1,30 @@
 from datetime import datetime
 import re
 
+import json
+
+def guardar_estudiantes_json(estudiantes, nombre_archivo="estudiantes.json"):
+    with open(nombre_archivo, "w", encoding="utf-8") as f:
+        json.dump(estudiantes, f, ensure_ascii=False, indent=4)
+
+def cargar_estudiantes_json(nombre_archivo="estudiantes.json"):
+    try:
+        with open(nombre_archivo, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return []
+
+def guardar_asistencia_txt(estudiantes, sesiones, asistencia, nombre_archivo="asistencia.txt"):
+    try:
+        with open(nombre_archivo, "w", encoding="utf-8") as f:
+            f.write("Nombre".ljust(20) + "".join(s.ljust(8) for s in sesiones) + "\n")
+            for idx, estudiante in enumerate(estudiantes):
+                linea = estudiante["nombre"].ljust(20)
+                linea += "".join(("P" if asistencia[idx][j] == 1 else "A").ljust(8) for j in range(len(sesiones)))
+                f.write(linea + "\n")
+    except Exception as e:
+        print(f"Error al guardar asistencia: {e}")
+
 def agregar_sesion(sesiones, asistencia, sesion):
     sesiones.append(sesion)
     for fila in asistencia:
@@ -102,7 +126,6 @@ def archivo(matriz):
 
 def es_duplicado(campo, valor, estudiantes):
     return any(str(est[campo]).title() == str(valor).title() for est in estudiantes)
-
 def validarcorreo():
     usuario=input("Ingrese nombre de usuario para el correo :")
     patron='[a-zA-Z]{2,10}[0-9]{,4}'
@@ -111,7 +134,6 @@ def validarcorreo():
             return usuario+'@uade.edu.ar'
         else:
             usuario=input("Ingrese nombre de usuario(letras y numeros)hasta 10 caracteres :")
-            
 def obtener_legajo(estudiantes):
     legajo = [dic['legajo'] for dic in estudiantes if 'legajo' in dic]
     nuevo = max(legajo) + 1 
