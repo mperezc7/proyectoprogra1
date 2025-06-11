@@ -1,6 +1,7 @@
 from datetime import datetime
 from calendario import dic_matxcl
 import re
+import json
 def agregar_sesion(sesiones, asistencia, sesion):
     sesiones.append(sesion)
     for fila in asistencia:
@@ -14,35 +15,32 @@ def obtener_fecha():
 def verificar_estado_usuario(fecha_baja, fecha_registro):
     return fecha_baja is None or fecha_registro <= fecha_baja
 
-def registrar_asistencia(estudiantes, sesiones, asistencia, estudiante_index, sesion_index):
-    if estudiante_index < 0 or estudiante_index >= len(estudiantes) or sesion_index < 0 or sesion_index >= len(sesiones):
-        print("Índice de estudiante o sesión no válido.")
-        return asistencia
-
-    estudiante = estudiantes[estudiante_index]
-    fecha_actual = obtener_fecha()
-
+def marcar_A(asistencia,seleccion,i,pos_ses):
+    asistencia[i][pos_ses] = seleccion
+#     for i in asistencia:
+#         for j in i:
+#             if pos_ses==j:
+#                 asistencia[i][j].append(seleccion)
+    return asistencia
+def registrar_asistencia(estudiante, sesiones, asistencia,seleccion,i,pos_ses):
+    fecha_actual = obtener_fecha()    
     if verificar_estado_usuario(estudiante["fecha_baja"], fecha_actual):
-        asistencia[estudiante_index][sesion_index] = 1
-        print(f"Asistencia registrada para '{estudiante['nombre']}' en la sesión '{sesiones[sesion_index]}'.")
+        marcar_A(asistencia,seleccion,i,pos_ses)
+        print(f"Asistencia registrada en la sesión '{sesiones[pos_ses]}'.")
     else:
         print(f"El estudiante '{estudiante['nombre']}' está dado de baja y no puede registrar asistencia.")
 
     return asistencia
 
-def dar_de_baja_usuario(estudiantes, estudiante_index):
-    if estudiante_index < 0 or estudiante_index >= len(estudiantes):
-        print("Índice de estudiante no válido.")
-        return estudiantes
-
-    estudiante = estudiantes[estudiante_index]
-    if estudiante["fecha_baja"] is not None:
-        print(f"El estudiante '{estudiante['nombre']}' ya fue dado de baja el {estudiante['fecha_baja']}.")
-    else:
-        estudiante["fecha_baja"] = obtener_fecha()
-        justificacion = input(f"Ingrese la justificación de la baja para '{estudiante['nombre']}': ")
-        estudiante["justificacion_baja"] = justificacion
-        print(f"Estudiante '{estudiante['nombre']}' dado de baja correctamente en {estudiante['fecha_baja']}.")
+def dar_de_baja_usuario(estudiantes, legajo):
+    
+    for dic in estudiantes:
+        if dic['legajo']==legajo:
+            if estudiante["fecha_baja"] is not None:
+                print(f"El estudiante '{estudiante['nombre']}' ya fue dado de baja el {estudiante['fecha_baja']}.")
+            else:
+                estudiante["fecha_baja"] = obtener_fecha()
+                print(f"Estudiante '{estudiante['nombre']}' dado de baja correctamente en {estudiante['fecha_baja']}.")
 
     return estudiantes
 
@@ -87,9 +85,39 @@ def mostrar_asistencia(estudiantes, sesiones, asistencia):
     print()
     for i, est in enumerate(estudiantes):
         print(f"{est['nombre']:<20}: ", end="")
-        for j in range(len(sesiones)):
-            print("P".ljust(7," ") if asistencia[i][j] == 1 else "A".ljust(7,' '), end=" ")
+        for j in range(len(sesiones)):#P_1                    
+            print("P".ljust(7," ") if asistencia[i][j] == 'P' else "A".ljust(7,' '), end=" ")
         print()
+import json
+def editar_arch(archivo,legajo):
+    try:
+        with open(archivo, 'r', encoding="UTF-8") as datos:
+            estudiantes = json.load(datos)
+            
+        legajos = [dic["legajo"] for dic in estudiantes]
+        if legajo in legajos:
+            indice = legajos.index(legajo)
+            estudiantes.pop(indice)  # Elimina por índice
+
+            with open(archivo, 'w', encoding="UTF-8") as datos:
+                json.dump(estudiantes, datos, ensure_ascii=False, indent=4)
+            print(f"Estudiantes con legajo {legajo} eliminado.")
+        else:
+            print(f"Estudiante con legajo {legajo} no encontrado.")
+
+    except (FileNotFoundError, OSError) as error:
+        print(f'Error! {error}')
+
+def archjson(estudiantes):
+    
+    try:
+        archivo = open('stock.json', 'w')
+        json.dump(estudiantes, archivo) 
+                                    
+    except:
+        print("No se pudo abrir el archivo")
+    finally:
+        archivo.close()
 
 def archivo(matriz):
     try:
@@ -247,11 +275,17 @@ def menu_estudiantes(estudiantes, asistencia):
         elif opcion == '2':
             for idx, est in enumerate(estudiantes):
                 
-                print(f"{idx}: {est['nombre']}")
+                print(f"{idx+1}: {est['legajo']} {est['nombre']}")
                 
-            estudiante_index = int(input("Ingrese el índice del estudiante a dar de baja: "))
-            dar_de_baja_usuario(estudiantes, estudiante_index)
-            
+            estudiante_legajo = int(input("Ingrese el legajo del estudiante a dar de baja: "))
+            dar_de_baja_usuario(estudiantes, estudiante_legajo)
+            op=input("Eliminar estudiante en el registro de archivos (SI/NO):")
+            if op.upper()=='SI':
+                editar_arch('estudiantes.json',estudiante_legajo)
+            elif op.upper()=='NO':
+                print('no se elimino estudiante del registro de archivo')
+            else:
+                print('reingresar eleccion')
         elif opcion == '3':
             
             estudiantes_ordenados = sorted(estudiantes, key=lambda est: est['nombre'].lower())
@@ -280,16 +314,29 @@ def menu_estudiantes(estudiantes, asistencia):
         else:
             print("Opción no válida. Intente nuevamente.")
 
+def encabezado_fech(sesiones,materias_fech,m):
+    n=len(sesiones)-1
+    if m in materias_fech:
+        fechas = materias_fech[m]  # Obtener la lista de fechas
+        # Asegurarse de que n no exceda el índice de fechas
+        if n < len(fechas):
+            print(f'{m:<20} {fechas[n].strip():>20}')  # Usar .strip() para eliminar espacios
+        else:
+            print(f'No hay fecha para la sesión {n} de la materia {m}')
+    else:
+        print(f'La materia {m} no se encuentra en el registro.')    
+    
+   
+    return n    
 def main():
-    estudiantes = [{'legajo':11111, 'nombre':'leo Castillo','correo':'abc1@gmail.edu.ar','materias':['fisica', 'progra1'],'fecha_baja':None},
-                   {'legajo':11112, 'nombre':'caro Casto','correo':'abc2@gmail.edu.ar','materias':['progra1'],'fecha_baja':None},
-                   {'legajo':11113, 'nombre':'andres julio','correo':'abc3@gmail.edu.ar','materias':None,'fecha_baja':None}]
+    estudiantes = [{'legajo':11111, 'nombre':'leo Castillo','correo':'abc1@uade.edu.ar','materias':['fisica', 'progra1'],'fecha_baja':None},
+                   {'legajo':11112, 'nombre':'caro Casto','correo':'abc2@uade.edu.ar','materias':['progra1'],'fecha_baja':None},
+                   {'legajo':11113, 'nombre':'andres julio','correo':'abc3@uade.edu.ar','materias':None,'fecha_baja':None}]
     
     materias={'fisica':'Lunes','progra1':'Viernes'}
     materias_fech=dic_matxcl(materias)
     sesiones = ['cl1', 'cl2','cl3', 'cl4','cl5', 'cl6']
-    for clave in materias:
-        n=len(materias[clave])
+    
     asistencia = [[0]*len(sesiones) for dic in estudiantes]
 
     while True:
@@ -310,14 +357,21 @@ def main():
             mostrar_asistencia(estudiantes, sesiones, asistencia)
             
         elif opcion == '3':
-            for idx, est in enumerate(estudiantes):
-                print(f"{idx}: {est['nombre']}")
-            estudiante_index = int(input("Índice del estudiante: "))
-            for idx, ses in enumerate(sesiones):
-                print(f"{idx}: {ses}")
-            sesion_index = int(input("Índice de la sesión: "))
-            registrar_asistencia(estudiantes, sesiones, asistencia, estudiante_index, sesion_index)    
-        
+            selecciona=input('Ingresa nombre de la materia:')
+            for m in materias:
+                if selecciona==m:
+                    print('\nAsistencia')
+                    print('Ingresa "P" presente o "A" ausente:')
+                    pos_ses=encabezado_fech(sesiones,materias_fech,m)
+                    for i,est in enumerate(estudiantes):
+                        print(f" {est['legajo']} {est['nombre']} ",end=' ')
+                        p=input("(P o A) :  ").upper()
+                        if p in "PA":
+                            registrar_asistencia(estudiantes, sesiones, asistencia,p,i,pos_ses)                          
+                       
+                        else:
+                            print("reingresar dato")
+                            
         elif opcion == '4':
             nombre_clase = input("Ingrese el nombre de la clase: ")
             sesiones, asistencia = agregar_sesion(sesiones, asistencia, nombre_clase)
