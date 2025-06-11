@@ -37,36 +37,23 @@ def obtener_fecha():
 
 def verificar_estado_usuario(fecha_baja, fecha_registro):
     return fecha_baja is None or fecha_registro <= fecha_baja
-
-def registrar_asistencia(estudiantes, sesiones, asistencia, estudiante_index, sesion_index):
-    if estudiante_index < 0 or estudiante_index >= len(estudiantes) or sesion_index < 0 or sesion_index >= len(sesiones):
-        print("Índice de estudiante o sesión no válido.")
-        return asistencia
-
-    estudiante = estudiantes[estudiante_index]
-    fecha_actual = obtener_fecha()
-
-    if verificar_estado_usuario(estudiante["fecha_baja"], fecha_actual):
-        asistencia[estudiante_index][sesion_index] = 1
-        print(f"Asistencia registrada para '{estudiante['nombre']}' en la sesión '{sesiones[sesion_index]}'.")
-    else:
-        print(f"El estudiante '{estudiante['nombre']}' está dado de baja y no puede registrar asistencia.")
+def marcar_A(asistencia,seleccion,i,pos_ses):
+    asistencia[i][pos_ses] = seleccion
 
     return asistencia
+def registrar_asistencia(estudiante, sesiones, asistencia,seleccion,i,pos_ses):
+    fecha_actual = obtener_fecha()    
+    return asistencia
 
-def dar_de_baja_usuario(estudiantes, estudiante_index):
-    if estudiante_index < 0 or estudiante_index >= len(estudiantes):
-        print("Índice de estudiante no válido.")
-        return estudiantes
-
-    estudiante = estudiantes[estudiante_index]
-    if estudiante["fecha_baja"] is not None:
-        print(f"El estudiante '{estudiante['nombre']}' ya fue dado de baja el {estudiante['fecha_baja']}.")
-    else:
-        estudiante["fecha_baja"] = obtener_fecha()
-        justificacion = input(f"Ingrese la justificación de la baja para '{estudiante['nombre']}': ")
-        estudiante["justificacion_baja"] = justificacion
-        print(f"Estudiante '{estudiante['nombre']}' dado de baja correctamente en {estudiante['fecha_baja']}.")
+def dar_de_baja_usuario(estudiantes, legajo):
+    
+    for dic in estudiantes:
+        if dic['legajo']==legajo:
+            if estudiantes["fecha_baja"] is not None:
+                print(f"El estudiante '{estudiantes['nombre']}' ya fue dado de baja el {estudiantes['fecha_baja']}.")
+            else:
+                estudiantes["fecha_baja"] = obtener_fecha()
+                print(f"Estudiante '{estudiantes['nombre']}' dado de baja correctamente en {estudiantes['fecha_baja']}.")
 
     return estudiantes
 
@@ -138,6 +125,19 @@ def obtener_legajo(estudiantes):
     legajo = [dic['legajo'] for dic in estudiantes if 'legajo' in dic]
     nuevo = max(legajo) + 1 
     return nuevo
+def encabezado_fech(sesiones,materias_fech,m):
+    n=len(sesiones)-1
+    if m in materias_fech:
+        fechas = materias_fech[m] 
+        
+        if n < len(fechas):
+            print(f'{m:<20} {fechas[n].strip():>20}')  
+        else:
+            print(f'No hay fecha para la sesión {n} de la materia {m}')
+    else:
+        print(f'La materia {m} no se encuentra en el registro.')    
+    return n
+
 def submenu(estudiantes):
     nombre = ""
     legajo = ""
@@ -318,13 +318,20 @@ def menu_asistencias(estudiantes, sesiones, asistencia):
             mostrar_asistencia(estudiantes, sesiones, asistencia)
 
         elif opcion == '2':
-            for idx, est in enumerate(estudiantes):
-                print(f"{idx}: {est['nombre']}")
-            estudiante_index = int(input("Índice del estudiante: "))
-            for idx, ses in enumerate(sesiones):
-                print(f"{idx}: {ses}")
-            sesion_index = int(input("Índice de la sesión: "))
-            registrar_asistencia(estudiantes, sesiones, asistencia, estudiante_index, sesion_index)
+            selecciona=input('Ingresa nombre de la materia:')
+            for m in materias:
+                if selecciona==m:
+                    print('\nAsistencia')
+                    print('Ingresa "P" presente o "A" ausente:')
+                    pos_ses=encabezado_fech(sesiones,materias_fech,m)
+                    for i,est in enumerate(estudiantes):
+                        print(f" {est['legajo']} {est['nombre']} ",end=' ')
+                        p=input("(P o A) :  ").upper()
+                        if p in "PA":
+                            registrar_asistencia(estudiantes, sesiones, asistencia,p,i,pos_ses)                          
+                       
+                        else:
+                            print("reingresar dato")
 
         elif opcion == '3':
             for idx, est in enumerate(estudiantes):
