@@ -1,6 +1,6 @@
-
 from datetime import datetime
-
+from calendario import dic_matxcl
+import re
 def agregar_sesion(sesiones, asistencia, sesion):
     sesiones.append(sesion)
     for fila in asistencia:
@@ -15,7 +15,7 @@ def verificar_estado_usuario(fecha_baja, fecha_registro):
     return fecha_baja is None or fecha_registro <= fecha_baja
 
 def registrar_asistencia(estudiantes, sesiones, asistencia, estudiante_index, sesion_index):
-    if estudiante_index < 0 or estudiante_index >= len(estudiantes) or        sesion_index < 0 or sesion_index >= len(sesiones):
+    if estudiante_index < 0 or estudiante_index >= len(estudiantes) or sesion_index < 0 or sesion_index >= len(sesiones):
         print("Índice de estudiante o sesión no válido.")
         return asistencia
 
@@ -103,6 +103,18 @@ def archivo(matriz):
 def es_duplicado(campo, valor, estudiantes):
     return any(str(est[campo]).title() == str(valor).title() for est in estudiantes)
 
+def validarcorreo():
+    usuario=input("Ingrese nombre de usuario para el correo :")
+    patron='[a-zA-Z]{2,10}[0-9]{,4}'
+    while len(usuario)<=10:       
+        if re.match(patron,usuario):
+            return usuario+'@uade.edu.ar'
+        else:
+            usuario=input("Ingrese nombre de usuario(letras y numeros)hasta 10 caracteres :")
+def obtener_legajo(estudiantes):
+    legajo = [dic['legajo'] for dic in estudiantes if 'legajo' in dic]
+    nuevo = max(legajo) + 1 
+    return nuevo
 def submenu(estudiantes):
     nombre = ""
     legajo = ""
@@ -112,7 +124,7 @@ def submenu(estudiantes):
     while not finalizar:
         print("--- Opciones de ingreso ---")
         print("1. Ingresar nombre del estudiante")
-        print("2. Ingresar legajo del estudiante")
+        print("2. Obtener legajo del estudiante")
         print("3. Ingresar correo del estudiante")
         print("4. Guardar estudiante")
         print("5. Cancelar")
@@ -121,20 +133,21 @@ def submenu(estudiantes):
             assert subopcion in {'1', '2', '3', '4', '5'}, "Opción inválida."
 
             if subopcion == '1':
-                nuevo_nombre = input("Ingrese el nombre del estudiante: ").strip()
-                assert nuevo_nombre, "El nombre no puede estar vacío."
+                nuevo_nombre= input("Ingrese el nombre del estudiante: ").strip()
+                #if partes.isalpha() for partes in nuevo.split()
+                
+                assert nuevo_nombre.isalpha(), "El nombre no puede estar vacío."
                 assert not es_duplicado("nombre", nuevo_nombre, estudiantes), "Nombre ya registrado."
-                nombre = nuevo_nombre.title()
+                nombre = nuevo.title()
 
             elif subopcion == '2':
-                nuevo_legajo = input("Ingrese el legajo del estudiante: ").strip()
-                assert nuevo_legajo.isdigit(), "El legajo debe ser numérico."
-                assert not es_duplicado("legajo", nuevo_legajo, estudiantes), "Legajo ya registrado."
-                legajo = int(nuevo_legajo)
+                nuevo=obtener_legajo(estudiantes)
+                print("Legajo: ",nuevo)
+                legajo = int(nuevo)
 
             elif subopcion == '3':
-                nuevo_correo = input("Ingrese el correo del estudiante: ").strip()
-                assert "@" in nuevo_correo and "." in nuevo_correo, "Correo no válido."
+                nuevo_correo=validarcorreo()
+                print(nuevo_correo)
                 assert not es_duplicado("correo", nuevo_correo, estudiantes), "Correo ya registrado."
                 correo = nuevo_correo
 
@@ -158,7 +171,7 @@ def submenu(estudiantes):
         except AssertionError as error:
             print(f"Error: {error}")
         except Exception as e:
-            print(f"Ocurrió un error inesperado: {e}")
+            print(f"Ocurrió un error inesperado: {e}")        
 
 def modificar_datos_estudiante(estudiantes):
     try:
@@ -180,33 +193,39 @@ def modificar_datos_estudiante(estudiantes):
             opcion = input("Seleccione una opción: ").strip()
 
             if opcion == '1':
-                nuevo_correo = input("Nuevo correo: ").strip()
-                if "@" in nuevo_correo and "." in nuevo_correo:
+                nuevo_correo=validarcorreo()
+                print(nuevo_correo)
+                if es_duplicado("correo", nuevo_correo, estudiantes) == False:
                     estudiante['correo'] = nuevo_correo
                     print("Correo actualizado.")
+                    
                 else:
-                    print("Correo no válido.")
+                    print("Correo no válido")
+                    
             elif opcion == '2':
                 nuevo_nombre = input("Nuevo nombre: ").strip()
-                if nuevo_nombre:
+                
+                if nuevo_nombre.isalpha():
                     estudiante['nombre'] = nuevo_nombre.title()
                     print("Nombre actualizado.")
+                    
                 else:
                     print("Nombre inválido.")
+                    
             elif opcion == '3':
-                nuevo_legajo = input("Nuevo legajo: ").strip()
-                if nuevo_legajo.isdigit() and not es_duplicado("legajo", nuevo_legajo, estudiantes):
-                    estudiante['legajo'] = int(nuevo_legajo)
-                    print("Legajo actualizado.")
-                else:
-                    print("Legajo inválido o duplicado.")
-            elif opcion == '4':
+                nuevo=obtener_legajo(estudiantes)
+                estudiante['legajo']=int(nuevo)
+                print("Nuevo legajo: ",estudiante['legajo'])
+            elif opcion=='4':#mod materias
                 materias = input("Ingrese las materias separadas por coma: ").strip()
                 lista_materias = [m.strip() for m in materias.split(',') if m.strip()]
                 estudiante['materias'] = lista_materias if lista_materias else None
                 print("Materias actualizadas.")
+                
             elif opcion == '5':
+                
                 break
+            
             else:
                 print("Opción no válida.")
     except Exception as e:
@@ -224,27 +243,40 @@ def menu_estudiantes(estudiantes, asistencia):
 
         if opcion == '1':
             submenu(estudiantes)
+            
         elif opcion == '2':
             for idx, est in enumerate(estudiantes):
+                
                 print(f"{idx}: {est['nombre']}")
+                
             estudiante_index = int(input("Ingrese el índice del estudiante a dar de baja: "))
             dar_de_baja_usuario(estudiantes, estudiante_index)
+            
         elif opcion == '3':
+            
             estudiantes_ordenados = sorted(estudiantes, key=lambda est: est['nombre'].lower())
-            matriz = dic_a_matriz(estudiantes_ordenados)
-            for i in list(estudiantes_ordenados[0]):
-                print(f'{i:<20}', end=" ")
-            print()
-            mostrar_lista_estudiantes(matriz)
-            print("\nPrimeros 3 estudiantes:")
-            mostrar_lista_estudiantes(dic_a_matriz(estudiantes_ordenados[:3]))
-            print("\nÚltimos 3 estudiantes:")
-            mostrar_lista_estudiantes(dic_a_matriz(estudiantes_ordenados[-3:]))
-            archivo(matriz)
+            print("--- Submenú de Visualización ---")
+            print("1. Ver lista detallada (toda la matriz)")
+            print("2. Ver lista general (legajo, nombre y correo)")
+            eleccion = input("Seleccione una opción: ")
+            if eleccion == '1':
+                matriz = dic_a_matriz(estudiantes_ordenados)
+                for i in list(estudiantes_ordenados[0]):
+                    print(f'{i:<20}', end=" ")
+                print()
+                mostrar_lista_estudiantes(matriz)
+            elif eleccion=='2':
+                print(f"{'Legajo':<20} {'Nombre':<20} {'Correo':<20}")
+                for est in estudiantes_ordenados:
+                    fila = list(est.values())[:3]  # slicing
+                    print(f"{str(fila[0]):<20} {str(fila[1]):<20} {str(fila[2]):<20}")
+                                           
         elif opcion == '4':
             modificar_datos_estudiante(estudiantes)
+            
         elif opcion == '5':
             break
+        
         else:
             print("Opción no válida. Intente nuevamente.")
 
@@ -252,8 +284,13 @@ def main():
     estudiantes = [{'legajo':11111, 'nombre':'leo Castillo','correo':'abc1@gmail.edu.ar','materias':['fisica', 'progra1'],'fecha_baja':None},
                    {'legajo':11112, 'nombre':'caro Casto','correo':'abc2@gmail.edu.ar','materias':['progra1'],'fecha_baja':None},
                    {'legajo':11113, 'nombre':'andres julio','correo':'abc3@gmail.edu.ar','materias':None,'fecha_baja':None}]
-    sesiones = ['cl1', 'cl2']
-    asistencia = [[0]*len(sesiones) for _ in estudiantes]
+    
+    materias={'fisica':'Lunes','progra1':'Viernes'}
+    materias_fech=dic_matxcl(materias)
+    sesiones = ['cl1', 'cl2','cl3', 'cl4','cl5', 'cl6']
+    for clave in materias:
+        n=len(materias[clave])
+    asistencia = [[0]*len(sesiones) for dic in estudiantes]
 
     while True:
         print("\n===== MENÚ PRINCIPAL =====")
@@ -268,8 +305,10 @@ def main():
 
         if opcion == '1':
             menu_estudiantes(estudiantes, asistencia)
+            
         elif opcion == '2':
             mostrar_asistencia(estudiantes, sesiones, asistencia)
+            
         elif opcion == '3':
             for idx, est in enumerate(estudiantes):
                 print(f"{idx}: {est['nombre']}")
@@ -277,20 +316,25 @@ def main():
             for idx, ses in enumerate(sesiones):
                 print(f"{idx}: {ses}")
             sesion_index = int(input("Índice de la sesión: "))
-            registrar_asistencia(estudiantes, sesiones, asistencia, estudiante_index, sesion_index)
+            registrar_asistencia(estudiantes, sesiones, asistencia, estudiante_index, sesion_index)    
+        
         elif opcion == '4':
             nombre_clase = input("Ingrese el nombre de la clase: ")
             sesiones, asistencia = agregar_sesion(sesiones, asistencia, nombre_clase)
+            
         elif opcion == '5':
             print(f"Estudiantes vigentes: {contar_usuarios_vigentes(estudiantes)}")
+            
         elif opcion == '6':
             for idx, est in enumerate(estudiantes):
                 print(f"{idx}: {est['nombre']}")
             estudiante_index = int(input("Índice del estudiante: "))
             calcular_inasistencia_estudiante(estudiantes, sesiones, asistencia, estudiante_index)
+            
         elif opcion == '7':
             print("Saliendo del sistema.")
             break
+        
         else:
             print("Opción inválida.")
 

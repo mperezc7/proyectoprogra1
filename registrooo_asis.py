@@ -1,5 +1,6 @@
-
 from datetime import datetime
+from calendario import dic_matxcl
+import re
 
 def agregar_sesion(sesiones, asistencia, sesion):
     sesiones.append(sesion)
@@ -15,7 +16,7 @@ def verificar_estado_usuario(fecha_baja, fecha_registro):
     return fecha_baja is None or fecha_registro <= fecha_baja
 
 def registrar_asistencia(estudiantes, sesiones, asistencia, estudiante_index, sesion_index):
-    if estudiante_index < 0 or estudiante_index >= len(estudiantes) or        sesion_index < 0 or sesion_index >= len(sesiones):
+    if estudiante_index < 0 or estudiante_index >= len(estudiantes) or sesion_index < 0 or sesion_index >= len(sesiones):
         print("Índice de estudiante o sesión no válido.")
         return asistencia
 
@@ -81,12 +82,14 @@ def mostrar_lista_estudiantes(matriz):
 
 def mostrar_asistencia(estudiantes, sesiones, asistencia):
     print("\nAsistencia:")
-    print("Estudiantes:", [e["nombre"] for e in estudiantes])
-    print("Sesiones:", sesiones)
+    print(f"{'':<20}",end=' ')
+    for s in sesiones:
+        print(f"{s:<7}",end=' ')
+    print()
     for i, est in enumerate(estudiantes):
-        print(f"{est['nombre']}: ", end="")
+        print(f"{est['nombre']:<20}: ", end="")
         for j in range(len(sesiones)):
-            print("P" if asistencia[i][j] == 1 else "A", end=" ")
+            print("P".ljust(7," ") if asistencia[i][j] == 1 else "A".ljust(7,' '), end=" ")
         print()
 
 def archivo(matriz):
@@ -100,7 +103,18 @@ def archivo(matriz):
 
 def es_duplicado(campo, valor, estudiantes):
     return any(str(est[campo]).title() == str(valor).title() for est in estudiantes)
-
+def validarcorreo():
+    usuario=input("Ingrese nombre de usuario para el correo :")
+    patron='[a-zA-Z]{2,10}[0-9]{,4}'
+    while len(usuario)<=10:       
+        if re.match(patron,usuario):
+            return usuario+'@uade.edu.ar'
+        else:
+            usuario=input("Ingrese nombre de usuario(letras y numeros)hasta 10 caracteres :")
+def obtener_legajo(estudiantes):
+    legajo = [dic['legajo'] for dic in estudiantes if 'legajo' in dic]
+    nuevo = max(legajo) + 1 
+    return nuevo
 def submenu(estudiantes):
     nombre = ""
     legajo = ""
@@ -131,8 +145,8 @@ def submenu(estudiantes):
                 legajo = int(nuevo_legajo)
 
             elif subopcion == '3':
-                nuevo_correo = input("Ingrese el correo del estudiante: ").strip()
-                assert "@" in nuevo_correo and "." and "uade.edu.ar" in nuevo_correo, "Correo no válido."
+                nuevo_correo=validarcorreo()
+                print(nuevo_correo)
                 assert not es_duplicado("correo", nuevo_correo, estudiantes), "Correo ya registrado."
                 correo = nuevo_correo
 
@@ -171,26 +185,26 @@ def modificar_datos_estudiante(estudiantes):
             print(f"\n--- Modificar datos de: {estudiante['nombre']} ---")
             print("1. Modificar Correo")
             print("2. Modificar Nombre")
-            print("3. Modificar Legajo")
+            print("3. Obtener nuevo Legajo")
             print("4. Modificar Materias")
             print("5. Volver")
 
             opcion = input("Seleccione una opción: ").strip()
 
             if opcion == '1':
-                nuevo_correo = input("Nuevo correo: ").strip()
-                
-                if "@" in nuevo_correo and "." and "uade.edu.ar" in nuevo_correo:  #Exp Regulares
+                nuevo_correo=validarcorreo()
+                print(nuevo_correo)
+                if es_duplicado("correo", nuevo_correo, estudiantes) == False:
                     estudiante['correo'] = nuevo_correo
                     print("Correo actualizado.")
                     
                 else:
-                    print("Correo no válido.")
+                    print("Correo no válido")
                     
             elif opcion == '2':
                 nuevo_nombre = input("Nuevo nombre: ").strip()
                 
-                if nuevo_nombre:
+                if nuevo_nombre.isalpha():
                     estudiante['nombre'] = nuevo_nombre.title()
                     print("Nombre actualizado.")
                     
@@ -198,26 +212,15 @@ def modificar_datos_estudiante(estudiantes):
                     print("Nombre inválido.")
                     
             elif opcion == '3':
-                
-                estudiantes_ordenados = sorted(estudiantes, key=lambda est: est['nombre'].lower())
-                print("--- Submenú de Visualización ---")
-                print("1. Ver lista detallada (toda la matriz)")
-                print("2. Ver lista general (solo legajo, nombre y correo) usando slicing")
-                eleccion = input("Seleccione una opción: ")
-            if eleccion == '1':
-                matriz = dic_a_matriz(estudiantes_ordenados)
-                for i in list(estudiantes_ordenados[0]):
-                    print(f'{i:<20}', end=" ")
-                print()
-                mostrar_lista_estudiantes(matriz)
-            elif eleccion == '2':
-                print(f"{'Legajo':<20} {'Nombre':<20} {'Correo':<20}")
-                for est in estudiantes_ordenados:
-                    fila = list(est.values())[:3]  # slicing
-                    print(f"{str(fila[0]):<20} {str(fila[1]):<20} {str(fila[2]):<20}")
-            
-        
-                
+                nuevo=obtener_legajo(estudiantes)
+                estudiante['legajo']=int(nuevo)
+                print("Nuevo legajo: ",estudiante['legajo'])
+               
+            elif opcion == '4':
+                materias = input("Ingrese las materias separadas por coma: ").strip()
+                lista_materias = [m.strip() for m in materias.split(',') if m.strip()]
+                estudiante['materias'] = lista_materias if lista_materias else None
+                print("Materias actualizadas.")
             elif opcion == '5':
                 
                 break
@@ -272,12 +275,14 @@ def menu_estudiantes(estudiantes, asistencia):
             print("Opción no válida. Intente nuevamente.")
 
 def main():
-    estudiantes = [{'legajo':11111, 'nombre':'leo Castillo','correo':'abc1@gmail.edu.ar','materias':['fisica', 'progra1'],'fecha_baja':None},
-                   {'legajo':11112, 'nombre':'caro Casto','correo':'abc2@gmail.edu.ar','materias':['progra1'],'fecha_baja':None},
-                   {'legajo':11113, 'nombre':'andres julio','correo':'abc3@gmail.edu.ar','materias':None,'fecha_baja':None}]
-    sesiones = ['cl1', 'cl2']
-    asistencia = [[0]*len(sesiones) for _ in estudiantes]
-
+    estudiantes = [{'legajo':11111, 'nombre':'leo Castillo','correo':'abc1@uade.edu.ar','materias':['fisica', 'progra1'],'fecha_baja':None},
+                   {'legajo':11112, 'nombre':'caro Casto','correo':'abc2@uade.edu.ar','materias':['progra1'],'fecha_baja':None},
+                   {'legajo':11113, 'nombre':'andres julio','correo':'abc3@uade.edu.ar','materias':['fisica'],'fecha_baja':None}]
+    materias={'fisica':'Lunes','progra1':'Viernes'}
+    materias_fech=dic_matxcl(materias)
+    sesiones = ['cl1', 'cl2','cl3', 'cl4','cl5', 'cl6']
+    asistencia = [[0]*len(sesiones) for dic in estudiantes]
+    
     while True:
         print("\n===== MENÚ PRINCIPAL =====")
         print("1. Menú Estudiantes")
