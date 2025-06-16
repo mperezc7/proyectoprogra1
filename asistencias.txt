@@ -1,0 +1,129 @@
+fisica
+clase,1
+11111,Leo Castillo,A
+11112,Caro Casto,A
+11113,Andres Julio,A
+11114,Maria Castillo,A
+
+clase,2
+11111,Leo Castillo,A
+11112,Caro Casto,A
+11113,Andres Julio,A
+11114,Maria Castillo,A
+
+clase,3
+11111,Leo Castillo,A
+11112,Caro Casto,A
+11113,Andres Julio,A
+11114,Maria Castillo,A
+
+clase,4
+11111,Leo Castillo,A
+11112,Caro Casto,A
+11113,Andres Julio,A
+11114,Maria Castillo,A
+
+clase,5
+11111,Leo Castillo,A
+11112,Caro Casto,A
+11113,Andres Julio,A
+11114,Maria Castillo,A
+
+clase,6
+11111,Leo Castillo,A
+11112,Caro Casto,A
+11113,Andres Julio,A
+11114,Maria Castillo,A
+
+clase,7
+11111,Leo Castillo,A
+11112,Caro Casto,A
+11113,Andres Julio,A
+11114,Maria Castillo,A
+
+progra1
+clase,1
+11111,Leo Castillo,A
+11112,Caro Casto,A
+11113,Andres Julio,A
+11114,Maria Castillo,A
+
+clase,2
+11111,Leo Castillo,P
+11112,Caro Casto,P
+11113,Andres Julio,P
+11114,Maria Castillo,A
+
+clase,3
+11111,Leo Castillo,A
+11112,Caro Casto,A
+11113,Andres Julio,A
+11114,Maria Castillo,A
+
+clase,4
+11111,Leo Castillo,A
+11112,Caro Casto,A
+11113,Andres Julio,A
+11114,Maria Castillo,A
+
+clase,5
+11111,Leo Castillo,A
+11112,Caro Casto,A
+11113,Andres Julio,A
+11114,Maria Castillo,A
+
+clase,6
+11111,Leo Castillo,A
+11112,Caro Casto,A
+11113,Andres Julio,A
+11114,Maria Castillo,A
+
+clase,7
+11111,Leo Castillo,A
+11112,Caro Casto,A
+11113,Andres Julio,A
+11114,Maria Castillo,A
+
+calculo
+clase,1
+11111,Leo Castillo,P
+11112,Caro Casto,P
+11113,Andres Julio,P
+11114,Maria Castillo,P
+
+clase,2
+11111,Leo Castillo,P
+11112,Caro Casto,P
+11113,Andres Julio,P
+11114,Maria Castillo,P
+
+clase,3
+11111,Leo Castillo,A
+11112,Caro Casto,A
+11113,Andres Julio,A
+11114,Maria Castillo,A
+
+clase,4
+11111,Leo Castillo,A
+11112,Caro Casto,A
+11113,Andres Julio,A
+11114,Maria Castillo,A
+
+clase,5
+11111,Leo Castillo,A
+11112,Caro Casto,A
+11113,Andres Julio,A
+11114,Maria Castillo,A
+
+clase,6
+11111,Leo Castillo,A
+11112,Caro Casto,A
+11113,Andres Julio,A
+11114,Maria Castillo,A
+
+clase,7
+11111,Leo Castillo,A
+11112,Caro Casto,A
+11113,Andres Julio,A
+11114,Maria Castillo,A
+
