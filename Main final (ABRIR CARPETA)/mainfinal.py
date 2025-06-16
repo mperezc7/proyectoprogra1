@@ -27,9 +27,16 @@ def validar_correo():
             return usuario + '@uade.edu.ar'
         print("Formato inválido. Use 2-10 letras y hasta 4 dígitos.")
 
+
 def obtener_legajo(estudiantes):
-    legajos = [e['legajo'] for e in estudiantes if 'legajo' in e]
-    return max(legajos, default=11110) + 1
+    def max_legajo_rec(lista, indice=0):
+        if indice == len(lista):
+            return 11110
+        actual_legajo = lista[indice].get('legajo', 11110)
+        siguiente_max = max_legajo_rec(lista, indice + 1)
+        return max(actual_legajo, siguiente_max)
+    max_legajo = max_legajo_rec(estudiantes)
+    return max_legajo + 1
 
 # --- Menú Estudiantes ---
 def menu_estudiantes(estudiantes, sesiones, asistencia):
