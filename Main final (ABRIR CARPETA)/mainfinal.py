@@ -71,16 +71,22 @@ def registrar_asistencia_individual(estudiante, materia_pos, clase_idx, asistenc
             asistencia[materia_pos][clase_idx] = 1 if asist == 'P' else 0
             break
         print("Opción inválida. Ingrese 'P' (Presente) o 'A' (Ausente).")
-def buscar_estudiante_por_legajo(estudiantes, legajo):
+        
+        
+        
+        
+def buscar_estudiante_por_legajo(estudiantes, legajo, index=0):
     """Busca un estudiante por legajo y devuelve su índice y datos. Si no existe, retorna None."""
     try:
         legajo = int(legajo)
-        for i, e in enumerate(estudiantes):
-            if e['legajo'] == legajo:
-                return i, e
-        return None
+        if index >= len(estudiantes):
+            return None
+        if estudiantes[index]['legajo'] == legajo:
+            return index, estudiantes[index]
+        return buscar_estudiante_por_legajo(estudiantes, legajo, index + 1)
     except ValueError:
         return None
+        
 def matriz(estudiantes,sesiones):
     asistencia = []
     for estudiante in estudiantes:
@@ -169,7 +175,110 @@ def Reg_Asistencia(estudiantes,sesiones,asistencia):
             print("Error: Legajo no encontrado.")
     else:
         print("Opción no válida.")
-    guardar_todo(estudiantes, sesiones, asistencia)    
+    guardar_todo(estudiantes, sesiones, asistencia)
+    
+# --- Menú Materias ---
+def menu_materias(materias, sesiones, estudiantes, asistencia):
+    while True:
+        print("\n--- Menú Materias ---")
+        print("1. Agregar Materia")
+        print("2. Modificar Nombre de Materia")
+        print("3. Eliminar Materia")
+        print("4. Volver")
+        op = input("Opción: ")
+        
+        if op == '1':
+            lista_dia = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes']
+            nombre = input("Nombre de la materia: ").strip()
+            dia = input("Día de la materia: ").strip().title()
+
+            if nombre in materias:
+                print("Error: La materia ya existe.")
+                continue
+
+            if dia in lista_dia:
+                if dia in materias.values():
+                    print("Error: El día ya está asignado a otra materia.")
+                    continue
+                materias[nombre] = dia
+                sesiones.append(nombre)
+                for estudiante_asistencia in asistencia:
+                    estudiante_asistencia.append([0] * 7)
+                guardar_todo(estudiantes, sesiones, asistencia)
+                print(f"Materia '{nombre}' agregada para el día {dia}.")
+            else:
+                print("Día no reconocido.")
+
+        elif op == '2':
+            print("\nMaterias actuales:")
+            for m in sesiones:
+                print(f"- {m}")
+
+            actual = input("Nombre de la materia a modificar: ").strip()
+            if actual not in materias:
+                print("Error: Materia no encontrada.")
+                continue
+
+            nuevo = input("Nuevo nombre: ").strip()
+            if nuevo in materias:
+                print("Error: Ya existe una materia con ese nombre.")
+                continue
+
+            # Actualizar diccionario materias
+            materias[nuevo] = materias.pop(actual)
+
+            # Actualizar lista de sesiones
+            idx = sesiones.index(actual)
+            sesiones[idx] = nuevo
+
+            # Actualizar lista de materias de cada estudiante
+            for e in estudiantes:
+                if actual in e['materias']:
+                    e['materias'] = [nuevo if m == actual else m for m in e['materias']]
+
+            guardar_todo(estudiantes, sesiones, asistencia)
+            print(f"Materia renombrada de '{actual}' a '{nuevo}' correctamente.")
+
+        elif op == '3':
+            print("\nMaterias disponibles:")
+            for m in sesiones:
+                print(f"- {m}")
+            nombre = input("Nombre de la materia a eliminar: ").strip()
+            if nombre not in materias:
+                print("Error: Materia no encontrada.")
+                continue
+
+            confirm = input(f"¿Está seguro que desea eliminar '{nombre}'? (s/n): ").lower()
+            if confirm != 's':
+                print("Cancelado.")
+                continue
+
+            # 1. Eliminar del diccionario
+            del materias[nombre]
+
+            # 2. Obtener índice de la materia en sesiones
+            idx = sesiones.index(nombre)
+
+            # 3. Eliminar de sesiones
+            sesiones.pop(idx)
+
+            # 4. Eliminar columna de asistencia
+            for fila in asistencia:
+                fila.pop(idx)
+
+            # 5. Eliminar de lista de materias de cada estudiante
+            for e in estudiantes:
+                if nombre in e['materias']:
+                    e['materias'].remove(nombre)
+
+            guardar_todo(estudiantes, sesiones, asistencia)
+            print(f"Materia '{nombre}' eliminada correctamente.")
+
+        elif op == '4':
+            break
+        else:
+            print("Opción inválida.")
+
 # --- Menú Estudiantes ---
 def menu_estudiantes(estudiantes, sesiones, asistencia):
     while True:
@@ -184,17 +293,24 @@ def menu_estudiantes(estudiantes, sesiones, asistencia):
         if op == '1':
             leg = obtener_legajo(estudiantes)
             nombre = input("Nombre del estudiante: ").strip().title()
-            correo=validar_correo()
-            correo=es_duplicado('correo',correo, estudiantes)
-            materias_input = input("Materias (coma sep.): ").split(',')
-            v_materias = [m.strip() for m in materias_input if m.strip()]
-            materias=[]
-            for m in v_materias:
-                if m not in sesiones:
-                    print(f"Error: La materia '{m}' no existe.")
-                    continue
+            correo = validar_correo()
+            correo = es_duplicado('correo', correo, estudiantes)
+            materias= []
+    # Validación repetitiva de materias hasta que todas existan
+            while True:
+                materias_input = input("Materias (coma y espacio separadas): ").strip()
+                v_materias = [m.strip() for m in materias_input.split(',') if m.strip()]
+                materias_invalidas = [m for m in v_materias if m not in sesiones]
+
+                if materias_invalidas:
+                    print(f"Error: Las siguientes materias no existen: {', '.join(materias_invalidas)}")
+                    print("Intente nuevamente.")
+                elif not v_materias:
+                    print("Debe ingresar al menos una materia.")
                 else:
-                    materias.append(m)
+                    materias = v_materias
+                break
+
             estudiantes.append({
                 'legajo': leg,
                 'nombre': nombre,
@@ -202,16 +318,18 @@ def menu_estudiantes(estudiantes, sesiones, asistencia):
                 'materias': materias,
                 'fecha_baja': None
             })
+
             nueva_asistencia = []
             for materia in sesiones:
                 if materia in materias:
-                    nueva_asistencia.append([0]*7) 
+                    nueva_asistencia.append([0] * 7)
                 else:
-                    nueva_asistencia.append(None) 
+                    nueva_asistencia.append(None)
             asistencia.append(nueva_asistencia)
-            
+
             guardar_todo(estudiantes, sesiones, asistencia)
             print(f"Alta de estudiante {nombre} agregado con legajo {leg}.")
+        
         elif op == '2':
             try:
                 leg = int(input("Ingrese legajo a dar de baja: "))
@@ -349,34 +467,14 @@ def main():
     asistencia = matriz(estudiantes,sesiones)
     while True:
         print("\n=== MENÚ PRINCIPAL ===")
-        print("1. Menu Estudiantes")
-        print("2. Menu Asistencias")
-        print("3. Agregar Materia")
+        print("1. Menú Estudiantes")
+        print("2. Menú Asistencias")
+        print("3. Menú Materias")
         print("4. Salir")
         op = input("Opción: ")
         if op=='1': menu_estudiantes(estudiantes,sesiones,asistencia)
         elif op=='2': menu_asistencias(estudiantes,sesiones,asistencia)
-        elif op=='3':
-            lista_dia=['Lunes','Martes','Miercoles','Jueves','Viernes']
-            nombre=input("Nombre de la materia: ").strip()
-            dia=input("Dia de la materia: ").strip().title()
-            
-            if nombre in materias:
-                print("Error: La materia ya existe.")
-                continue
-            
-            if dia in lista_dia:
-                if dia in materias.values():
-                    print("Error: El día ya está asignado a otra materia.")
-                    continue
-                materias[nombre] = dia
-                sesiones.append(nombre)
-                for estudiante_asistencia in asistencia:
-                    estudiante_asistencia.append([0]*7)
-                guardar_todo(estudiantes, sesiones, asistencia)
-                print(f"Materia '{nombre}' agregada para el día {dia}.")
-            else:
-                print("Dia no reconocido")
+        elif op=='3': menu_materias(materias, sesiones, estudiantes, asistencia)
         elif op=='4':
             print("Saliendo...")
             break
