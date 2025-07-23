@@ -32,8 +32,7 @@
         "nombre": "Matias Martinez",
         "correo": "maty123@uade.edu.ar",
         "materias": [
-            "fisica",
-            "algebra"
+            "fisica"
         ],
         "fecha_baja": null
     },
@@ -41,9 +40,7 @@
         "legajo": 11115,
         "nombre": "Jose Martinez",
         "correo": "jpmart123@uade.edu.ar",
-        "materias": [
-            "algebra"
-        ],
+        "materias": [],
         "fecha_baja": null
     },
     {
@@ -54,5 +51,12 @@
             "fisica"
         ],
         "fecha_baja": "2025-07-23 04:00:39.851572"
+    },
+    {
+        "legajo": 11117,
+        "nombre": "Lucas Torrez",
+        "correo": "lutrr123@uade.edu.ar",
+        "materias": [],
+        "fecha_baja": null
     }
 ]

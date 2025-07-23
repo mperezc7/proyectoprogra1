@@ -64,13 +64,7 @@ def obtener_legajo(estudiantes, index=0, max_legajo=11110):
         max_legajo = max(max_legajo, legajo_actual)
     return obtener_legajo(estudiantes, index + 1, max_legajo)
 
-def registrar_asistencia_individual(estudiante, materia_pos, clase_idx, asistencia):
-    while True:
-        asist = input(f"{estudiante['legajo']} {estudiante['nombre']} (P/A): ").strip().upper()
-        if asist in ('P', 'A'):
-            asistencia[materia_pos][clase_idx] = 1 if asist == 'P' else 0
-            break
-        print("Opción inválida. Ingrese 'P' (Presente) o 'A' (Ausente).")
+
         
         
         
@@ -95,7 +89,7 @@ def matriz(estudiantes,sesiones):
         asistencia_estudiante = []
         for materia in sesiones:
             if materia in materias_estudiante:
-                asistencia_estudiante.append([0] * 7)
+                asistencia_estudiante.append([1] * 7)
             else:
                 asistencia_estudiante.append(None)
         asistencia.append(asistencia_estudiante)
@@ -292,25 +286,19 @@ def menu_estudiantes(estudiantes, sesiones, asistencia):
         op = input("Opción: ")
         if op == '1':
             leg = obtener_legajo(estudiantes)
-            nombre = input("Nombre del estudiante: ").strip().title()
-            correo = validar_correo()
-            correo = es_duplicado('correo', correo, estudiantes)
-            materias= []
-    # Validación repetitiva de materias hasta que todas existan
-            while True:
-                materias_input = input("Materias (coma y espacio separadas): ").strip()
-                v_materias = [m.strip() for m in materias_input.split(',') if m.strip()]
-                materias_invalidas = [m for m in v_materias if m not in sesiones]
-
-                if materias_invalidas:
-                    print(f"Error: Las siguientes materias no existen: {', '.join(materias_invalidas)}")
-                    print("Intente nuevamente.")
-                elif not v_materias:
-                    print("Debe ingresar al menos una materia.")
+            nombre = input("Nombre del estudiante: ").strip().title()#control de entrada
+            correo=validar_correo()
+            correo=es_duplicado('correo',correo, estudiantes)
+            materias_input = input("Materias (coma sep.): ").split(',') #lo pasamos a lista
+            v_materias = [m.strip() for m in materias_input if m.strip()]
+            materias=[]
+            for m in v_materias:
+                if m not in sesiones:
+                    print(f"Error: La materia '{m}' no existe.")
+                    continue
                 else:
-                    materias = v_materias
-                break
-
+                    materias.append(m)
+                    
             estudiantes.append({
                 'legajo': leg,
                 'nombre': nombre,
@@ -318,18 +306,17 @@ def menu_estudiantes(estudiantes, sesiones, asistencia):
                 'materias': materias,
                 'fecha_baja': None
             })
-
             nueva_asistencia = []
             for materia in sesiones:
                 if materia in materias:
-                    nueva_asistencia.append([0] * 7)
+                    nueva_asistencia.append([0]*7) 
                 else:
-                    nueva_asistencia.append(None)
+                    nueva_asistencia.append(None)    # No inscrito
             asistencia.append(nueva_asistencia)
-
-            guardar_todo(estudiantes, sesiones, asistencia)
+            
+            guardar_todo(estudiantes, sesiones, asistencia) 
             print(f"Alta de estudiante {nombre} agregado con legajo {leg}.")
-        
+            
         elif op == '2':
             try:
                 leg = int(input("Ingrese legajo a dar de baja: "))
@@ -339,10 +326,29 @@ def menu_estudiantes(estudiantes, sesiones, asistencia):
             estudiantes, asistencia = dar_de_baja(estudiantes, asistencia, leg)
             guardar_todo(estudiantes, sesiones, asistencia)
         elif op == '3':
+            vigentes = [e for e in sorted(estudiantes, key=lambda x: x['nombre'].lower()) if e.get('fecha_baja') is None]
+
+            if not vigentes:
+                print("No hay estudiantes vigentes.")
+                continue
+
             print(f"{'Legajo':<8}{'Nombre':<20}{'Correo'}")
-            for e in sorted(estudiantes, key=lambda x: x['nombre'].lower()):
-                if e.get('fecha_baja') is None: 
+    
+            inicio = 0
+            tam_pagina = 10
+
+            while inicio < len(vigentes):
+                fin = inicio + tam_pagina
+                for e in vigentes[inicio:fin]:  # ← uso de slicing aquí
                     print(f"{e['legajo']:<8}{e['nombre']:<20}{e['correo']}")
+        
+                if fin >= len(vigentes):
+                    break  # No hay más estudiantes para mostrar
+        
+                seguir = input("¿Desea ver más estudiantes? (s/n): ").lower()
+                if seguir != 's':
+                    break
+                inicio += tam_pagina
         elif op == '4':
             leg = input("Legajo a modificar: ")
             est = next((x for x in estudiantes if str(x['legajo']) == leg), None)
