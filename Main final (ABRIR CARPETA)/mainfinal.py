@@ -9,7 +9,9 @@ from asistencia_persistencia import (
 def convertir_fecha(fecha_str):
     if fecha_str is None:
         return None
-    return datetime.strptime(fecha_str, '%Y-%m-%d %H:%M:%S.%f')
+    if isinstance(fecha_str, str):
+        return datetime.strptime(fecha_str, '%Y-%m-%d %H:%M:%S.%f')
+    return fecha_str
 
 def guardar_todo(estudiantes, sesiones, asistencia):
     """Guarda datos de estudiantes en JSON y asistencias en TXT."""
@@ -185,11 +187,14 @@ def menu_estudiantes(estudiantes, sesiones, asistencia):
             correo=validar_correo()
             correo=es_duplicado('correo',correo, estudiantes)
             materias_input = input("Materias (coma sep.): ").split(',')
-            materias = [m.strip() for m in materias_input if m.strip()]
-            for m in materias:
+            v_materias = [m.strip() for m in materias_input if m.strip()]
+            materias=[]
+            for m in v_materias:
                 if m not in sesiones:
                     print(f"Error: La materia '{m}' no existe.")
                     continue
+                else:
+                    materias.append(m)
             estudiantes.append({
                 'legajo': leg,
                 'nombre': nombre,
@@ -241,11 +246,14 @@ def menu_estudiantes(estudiantes, sesiones, asistencia):
                     print("Nombre actualizado.")
                 elif o == '3':
                     ms = input("Materias (coma sep.): ")
-                    materias = [m.strip() for m in ms.split(',') if m.strip()]
+                    v_materias = [m.strip() for m in ms.split(',') if m.strip()]
+                    materias=[]
                     for m in materias:
                         if m not in sesiones:
                             print(f"Error: La materia '{m}' no existe.")
                             continue
+                        else:
+                            materias.append(m)
                     est['materias'] = materias
                     nueva_asistencia = []
                     for materia in sesiones:

@@ -1,38 +1,45 @@
 fisica
 clase,1
-11111,Leo Castillo,A
-11113,Andres Julio,A
-11114,Matias Martinez,A
+11111,Leo Castillo,P
+11113,Andres Julio,P
+11114,Matias Martinez,P
+11116,Ana Lopez,A
 
 clase,2
-11111,Leo Castillo,A
-11113,Andres Julio,A
-11114,Matias Martinez,A
+11111,Leo Castillo,P
+11113,Andres Julio,P
+11114,Matias Martinez,P
+11116,Ana Lopez,P
 
 clase,3
 11111,Leo Castillo,A
 11113,Andres Julio,A
 11114,Matias Martinez,A
+11116,Ana Lopez,A
 
 clase,4
 11111,Leo Castillo,A
 11113,Andres Julio,A
 11114,Matias Martinez,A
+11116,Ana Lopez,A
 
 clase,5
 11111,Leo Castillo,A
 11113,Andres Julio,A
-11114,Matias Martinez,A
+11114,Matias Martinez,P
+11116,Ana Lopez,A
 
 clase,6
 11111,Leo Castillo,A
 11113,Andres Julio,A
 11114,Matias Martinez,A
+11116,Ana Lopez,A
 
 clase,7
 11111,Leo Castillo,A
 11113,Andres Julio,A
 11114,Matias Martinez,A
+11116,Ana Lopez,A
 
 progra1
 clase,1
@@ -44,8 +51,8 @@ clase,2
 11112,Caro Casto,A
 
 clase,3
-11111,Leo Castillo,A
-11112,Caro Casto,A
+11111,Leo Castillo,P
+11112,Caro Casto,P
 
 clase,4
 11111,Leo Castillo,A
@@ -62,26 +69,4 @@ clase,6
 clase,7
 11111,Leo Castillo,A
 11112,Caro Casto,A
-
-algebra
-clase,1
-11114,Matias Martinez,A
-
-clase,2
-11114,Matias Martinez,A
-
-clase,3
-11114,Matias Martinez,A
-
-clase,4
-11114,Matias Martinez,A
-
-clase,5
-11114,Matias Martinez,A
-
-clase,6
-11114,Matias Martinez,A
-
-clase,7
-11114,Matias Martinez,A
 

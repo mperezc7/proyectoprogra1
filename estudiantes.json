@@ -36,5 +36,23 @@
             "algebra"
         ],
         "fecha_baja": null
+    },
+    {
+        "legajo": 11115,
+        "nombre": "Jose Martinez",
+        "correo": "jpmart123@uade.edu.ar",
+        "materias": [
+            "algebra"
+        ],
+        "fecha_baja": null
+    },
+    {
+        "legajo": 11116,
+        "nombre": "Ana Lopez",
+        "correo": "analop1@uade.edu.ar",
+        "materias": [
+            "fisica"
+        ],
+        "fecha_baja": "2025-07-23 04:00:39.851572"
     }
 ]
