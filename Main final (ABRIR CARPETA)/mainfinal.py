@@ -5,18 +5,17 @@ from asistencia_persistencia import (
     guardar_estudiantes_json,
     guardar_asistencia_txt,
 )
-#revisar recursividad 
+
 def convertir_fecha(fecha_str):
     if fecha_str is None:
         return None
     return datetime.strptime(fecha_str, '%Y-%m-%d %H:%M:%S.%f')
-# --- Función de guardado combinado ---
+
 def guardar_todo(estudiantes, sesiones, asistencia):
     """Guarda datos de estudiantes en JSON y asistencias en TXT."""
     guardar_estudiantes_json(estudiantes)
     guardar_asistencia_txt(estudiantes, sesiones, asistencia)
 
-# --- Funciones auxiliares ---
 def obtener_fecha():
     return datetime.now()
 
@@ -42,22 +41,26 @@ def dar_de_baja(estudiantes, asistencia, leg):
                 print("\nEste estudiante YA estaba dado de baja.")
                 eliminar = input("¿Desea eliminarlo PERMANENTEMENTE del sistema? (s/n): ").lower()
                 if eliminar == 's':
-                    estudiantes.pop(i)  # Elimina al estudiante y obtiene su índice
-                    asistencia.pop(i)   # Elimina su fila de asistencia en el MISMO índice
+                    estudiantes.pop(i) 
+                    asistencia.pop(i)
                     print("¡Estudiante eliminado permanentemente!")
             else:
                 e['fecha_baja'] = obtener_fecha()
                 print(f"\nEstudiante {e['nombre']} dado de baja (permanece como registro).")
                 print("Nota: Para eliminarlo completamente del sistema,")
                 print("deberá darle de baja nuevamente y confirmar eliminación.")
-            return estudiantes, asistencia  # Retornar las listas actualizadas
+            return estudiantes, asistencia 
     else:
         print("Legajo no encontrado.")
-        return estudiantes, asistencia  # Retornar sin cambios si no se encontró
+        return estudiantes, asistencia
 
-def obtener_legajo(estudiantes):
-    legajos = [e['legajo'] for e in estudiantes if 'legajo' in e]
-    return max(legajos, default=11110) + 1
+def obtener_legajo(estudiantes, index=0, max_legajo=11110):
+    if index >= len(estudiantes):
+        return max_legajo + 1
+    legajo_actual = estudiantes[index].get('legajo', None)
+    if legajo_actual is not None:
+        max_legajo = max(max_legajo, legajo_actual)
+    return obtener_legajo(estudiantes, index + 1, max_legajo)
 
 def registrar_asistencia_individual(estudiante, materia_pos, clase_idx, asistencia):
     while True:
@@ -69,24 +72,24 @@ def registrar_asistencia_individual(estudiante, materia_pos, clase_idx, asistenc
 def buscar_estudiante_por_legajo(estudiantes, legajo):
     """Busca un estudiante por legajo y devuelve su índice y datos. Si no existe, retorna None."""
     try:
-        legajo = int(legajo)  # Asegurar que el legajo sea numérico
+        legajo = int(legajo)
         for i, e in enumerate(estudiantes):
             if e['legajo'] == legajo:
                 return i, e
-        return None  # Si no se encuentra
+        return None
     except ValueError:
-        return None  # Si el legajo no es un número válido
+        return None
 def matriz(estudiantes,sesiones):
     asistencia = []
     for estudiante in estudiantes:
         materias_estudiante = estudiante['materias']
-        # Crear lista de asistencia solo para las materias del estudiante
+        
         asistencia_estudiante = []
         for materia in sesiones:
             if materia in materias_estudiante:
-                asistencia_estudiante.append([0] * 7)  # 7 clases por materia
+                asistencia_estudiante.append([0] * 7)
             else:
-                asistencia_estudiante.append(None)  # No inscrito
+                asistencia_estudiante.append(None)
         asistencia.append(asistencia_estudiante)
     return asistencia
 def seleccionar_materia(materias):
@@ -108,17 +111,17 @@ def validar_clase():
         if not 1 <= clase <= 7:
             print("Error: La clase debe estar entre 1 y 7.")
             return None
-        clase_idx=clase - 1
-        return clase_idx,clase  # Retorna el índice (0-6)
+        return clase 
     except ValueError:
         print("Error: Ingrese un número válido.")
         return None
-#--- Menú Asistencia Clase---
+
 def Reg_Asistencia(estudiantes,sesiones,asistencia):
     pos, materia = seleccionar_materia(sesiones)
-    clase_idx,clase = validar_clase()
-    if clase_idx is None:
+    clase = validar_clase()
+    if clase is None:
         return
+    clase_idx=clase - 1
     estudiantes_inscritos = [(i, e) for i, e in enumerate(estudiantes)if materia in e['materias']]   
     if not estudiantes_inscritos:
         print(f"No hay estudiantes inscritos en {materia}.")
@@ -130,13 +133,13 @@ def Reg_Asistencia(estudiantes,sesiones,asistencia):
         print("\nRegistro completo de asistencia:")
         for i, est in estudiantes_inscritos:
             while True:
-                # Mostrar estado actual
+               
                 estado_actual = asistencia[i][pos][clase_idx] if asistencia[i][pos] is not None else None
                 estado_str = 'P' if estado_actual == 1 else 'A' if estado_actual == 0 else 'No registrado'               
                 nuevo_estado = input(f"{est['legajo']} {est['nombre']} (Actual: {estado_str}). Nuevo estado (P/A): ").upper().strip()
                 
                 if nuevo_estado in ('P', 'A'):
-                    if asistencia[i][pos] is None:# Inicializar si es necesario
+                    if asistencia[i][pos] is None:
                         asistencia[i][pos] = [None] * 7                    
                     asistencia[i][pos][clase_idx] = 1 if nuevo_estado == 'P' else 0
                     break
@@ -144,7 +147,7 @@ def Reg_Asistencia(estudiantes,sesiones,asistencia):
                     print("Error: Ingrese 'P' o 'A'.")
     elif opcion == 'E':
         print("\nEstudiantes inscritos:")
-        for _, est in estudiantes_inscritos:               #BORRAR _
+        for i, est in estudiantes_inscritos: 
             print(f"{est['legajo']}: {est['nombre']}")
         legajo = input("Legajo del estudiante a modificar: ")
         estudiante = next((e for l, e in estudiantes_inscritos if str(e['legajo']) == legajo), None)
@@ -181,7 +184,7 @@ def menu_estudiantes(estudiantes, sesiones, asistencia):
             nombre = input("Nombre del estudiante: ").strip().title()
             correo=validar_correo()
             correo=es_duplicado('correo',correo, estudiantes)
-            materias_input = input("Materias (coma sep.): ").split(',') #lo pasamos a lista
+            materias_input = input("Materias (coma sep.): ").split(',')
             materias = [m.strip() for m in materias_input if m.strip()]
             for m in materias:
                 if m not in sesiones:
@@ -197,12 +200,12 @@ def menu_estudiantes(estudiantes, sesiones, asistencia):
             nueva_asistencia = []
             for materia in sesiones:
                 if materia in materias:
-                    nueva_asistencia.append([0]*7)  # 7 clases inicializadas en 0
+                    nueva_asistencia.append([0]*7) 
                 else:
-                    nueva_asistencia.append(None)    # No inscrito
+                    nueva_asistencia.append(None) 
             asistencia.append(nueva_asistencia)
             
-            guardar_todo(estudiantes, sesiones, asistencia) #guardamos estu a archivo json
+            guardar_todo(estudiantes, sesiones, asistencia)
             print(f"Alta de estudiante {nombre} agregado con legajo {leg}.")
         elif op == '2':
             try:
@@ -210,31 +213,31 @@ def menu_estudiantes(estudiantes, sesiones, asistencia):
             except ValueError:
                 print("Legajo inválido.")
                 continue
-            estudiantes, asistencia = dar_de_baja(estudiantes, asistencia, leg)  # Llamar a la función y obtener listas actualizadas
-            guardar_todo(estudiantes, sesiones, asistencia)  # Guardar después de dar de baja
+            estudiantes, asistencia = dar_de_baja(estudiantes, asistencia, leg)
+            guardar_todo(estudiantes, sesiones, asistencia)
         elif op == '3':
             print(f"{'Legajo':<8}{'Nombre':<20}{'Correo'}")
             for e in sorted(estudiantes, key=lambda x: x['nombre'].lower()):
-                if e.get('fecha_baja') is None:  # Solo mostrar vigentes
+                if e.get('fecha_baja') is None: 
                     print(f"{e['legajo']:<8}{e['nombre']:<20}{e['correo']}")
         elif op == '4':
             leg = input("Legajo a modificar: ")
-            est = next((x for x in estudiantes if str(x['legajo']) == leg), None) #buscamos estud
+            est = next((x for x in estudiantes if str(x['legajo']) == leg), None)
             if not est:
                 print("No encontrado.")
                 continue
             while True:
-                print("1.Correo 2.Nombre 3.Materias 4.Volver") #elegimos op
+                print("1.Correo 2.Nombre 3.Materias 4.Volver")
                 o = input("Opción: ")
                 if o == '1':
                     correo=validar_correo()
                     est['correo']=es_duplicado('correo',correo, estudiantes)
-                    guardar_todo(estudiantes, sesiones, asistencia)#guardamos arch
+                    guardar_todo(estudiantes, sesiones, asistencia)
                     print("Correo actualizado.")
                 elif o == '2':
                     n = input("Nuevo nombre: ").strip().title()
                     est['nombre'] = n
-                    guardar_todo(estudiantes, sesiones, asistencia) #guardamos
+                    guardar_todo(estudiantes, sesiones, asistencia) 
                     print("Nombre actualizado.")
                 elif o == '3':
                     ms = input("Materias (coma sep.): ")
@@ -247,11 +250,11 @@ def menu_estudiantes(estudiantes, sesiones, asistencia):
                     nueva_asistencia = []
                     for materia in sesiones:
                         if materia in materias:
-                            nueva_asistencia.append([0]*7)  # 7 clases inicializadas en 0
+                            nueva_asistencia.append([0]*7)
                         else:
-                            nueva_asistencia.append(None)    # No inscrito                                    
+                            nueva_asistencia.append(None)                                  
                     idx = estudiantes.index(est)
-                    asistencia[idx] = nueva_asistencia  # Reemplazar la asistencia anterior                            
+                    asistencia[idx] = nueva_asistencia                           
                     guardar_todo(estudiantes, sesiones, asistencia)
                     print("Materias actualizadas.")
                 elif o == '4':
@@ -261,7 +264,7 @@ def menu_estudiantes(estudiantes, sesiones, asistencia):
         elif op == '5':
             vigentes = sum(1 for e in estudiantes if not e.get('fecha_baja') or (convertir_fecha(e['fecha_baja']) > datetime.now()))
             print(f"Estudiantes vigentes: {vigentes}")
-            #print(estudiantes)
+           
             print(len(estudiantes))
         elif op == '6':
             break
@@ -279,7 +282,7 @@ def menu_asistencias(estudiantes, sesiones, asistencia):
         op = input("Opción: ")
         if op == '1':
             pos,materia=seleccionar_materia(sesiones) #materia
-            # Filtrar estudiantes inscritos en la materia seleccionada
+            
             estudiantes_inscritos = [(i, e) for i, e in enumerate(estudiantes) if materia in e['materias']]
             if not estudiantes_inscritos:
                 print(f"\nNo hay estudiantes inscritos en {materia}.")
@@ -305,12 +308,12 @@ def menu_asistencias(estudiantes, sesiones, asistencia):
                 continue
             print(f"\nAsistencia de {estudiante['nombre']}:")
             
-            for materia in estudiante['materias']:  # Solo materias inscritas
+            for materia in estudiante['materias']:
                 try:
-                    pos_mat = sesiones.index(materia)  # Posición de la materia en sesiones
+                    pos_mat = sesiones.index(materia)
                     if asistencia[estudiantes.index(estudiante)][pos_mat] is not None:
-                        # Calcular porcentaje
-                        total_clases = 7  # 7 clases por materia
+                      
+                        total_clases = 7 
                         presentes = sum(asistencia[estudiantes.index(estudiante)][pos_mat])
                         porcentaje = (presentes / total_clases) * 100
                         print(f"- {materia}: {porcentaje:.1f}% de asistencia")
@@ -322,19 +325,19 @@ def menu_asistencias(estudiantes, sesiones, asistencia):
         else:
             print("Opción inválida.")
 
-# --- MAIN --- #no cargar archivo en memoria(pasar a json)
+# --- MAIN --- 
 def main():
-    estudiantes = cargar_estudiantes_json() #llamar a asistencia_persistencia// cargamos la [{est}] para un objeto python
-    if not estudiantes: #si no retorna json una lista de dicc
+    estudiantes = cargar_estudiantes_json()
+    if not estudiantes:
         estudiantes = [
             {'legajo':11111,'nombre':'Leo Castillo','correo':'abc1@uade.edu.ar','materias':['fisica','progra1'],'fecha_baja':None},
             {'legajo':11112,'nombre':'Caro Casto','correo':'abc2@uade.edu.ar','materias':['progra1'],'fecha_baja':None},
             {'legajo':11113,'nombre':'Andres Julio','correo':'abc3@uade.edu.ar','materias':['fisica'],'fecha_baja':None}
         ]
-        guardar_estudiantes_json(estudiantes) #guardamos el obj python a un arch json
+        guardar_estudiantes_json(estudiantes)
 
     materias = {'fisica':'Lunes','progra1':'Viernes'}
-    sesiones = list(materias.keys()) #obt lista de materias con claves 'fisica''progra1'
+    sesiones = list(materias.keys())
     asistencia = matriz(estudiantes,sesiones)
     while True:
         print("\n=== MENÚ PRINCIPAL ===")
@@ -345,27 +348,24 @@ def main():
         op = input("Opción: ")
         if op=='1': menu_estudiantes(estudiantes,sesiones,asistencia)
         elif op=='2': menu_asistencias(estudiantes,sesiones,asistencia)
-        elif op=='3': #AGREGAR MATERIA
+        elif op=='3':
             lista_dia=['Lunes','Martes','Miercoles','Jueves','Viernes']
             nombre=input("Nombre de la materia: ").strip()
             dia=input("Dia de la materia: ").strip().title()
-            # Validar si la materia ya existe
+            
             if nombre in materias:
                 print("Error: La materia ya existe.")
                 continue
-            # Validar si el día ya está asignado a otra materia
-            if dia in lista_dia:#verificar
+            
+            if dia in lista_dia:
                 if dia in materias.values():
                     print("Error: El día ya está asignado a otra materia.")
                     continue
-            # Agregar materia
-             
                 materias[nombre] = dia
-             
                 sesiones.append(nombre)
                 for estudiante_asistencia in asistencia:
                     estudiante_asistencia.append([0]*7)
-                guardar_todo(estudiantes, sesiones, asistencia)  # Guardar cambios
+                guardar_todo(estudiantes, sesiones, asistencia)
                 print(f"Materia '{nombre}' agregada para el día {dia}.")
             else:
                 print("Dia no reconocido")
