@@ -339,10 +339,29 @@ def menu_estudiantes(estudiantes, sesiones, asistencia):
             estudiantes, asistencia = dar_de_baja(estudiantes, asistencia, leg)
             guardar_todo(estudiantes, sesiones, asistencia)
         elif op == '3':
+            vigentes = [e for e in sorted(estudiantes, key=lambda x: x['nombre'].lower()) if e.get('fecha_baja') is None]
+
+            if not vigentes:
+                print("No hay estudiantes vigentes.")
+                continue
+
             print(f"{'Legajo':<8}{'Nombre':<20}{'Correo'}")
-            for e in sorted(estudiantes, key=lambda x: x['nombre'].lower()):
-                if e.get('fecha_baja') is None: 
+    
+            inicio = 0
+            tam_pagina = 10
+
+            while inicio < len(vigentes):
+                fin = inicio + tam_pagina
+                for e in vigentes[inicio:fin]:  # ← uso de slicing aquí
                     print(f"{e['legajo']:<8}{e['nombre']:<20}{e['correo']}")
+        
+                if fin >= len(vigentes):
+                    break  # No hay más estudiantes para mostrar
+        
+                seguir = input("¿Desea ver más estudiantes? (s/n): ").lower()
+                if seguir != 's':
+                    break
+                inicio += tam_pagina
         elif op == '4':
             leg = input("Legajo a modificar: ")
             est = next((x for x in estudiantes if str(x['legajo']) == leg), None)
