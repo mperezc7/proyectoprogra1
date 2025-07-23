@@ -197,7 +197,7 @@ def menu_materias(materias, sesiones, estudiantes, asistencia):
                 materias[nombre] = dia
                 sesiones.append(nombre)
                 for estudiante_asistencia in asistencia:
-                    estudiante_asistencia.append([0] * 7)
+                    estudiante_asistencia.append([1] * 7)
                 guardar_todo(estudiantes, sesiones, asistencia)
                 print(f"Materia '{nombre}' agregada para el día {dia}.")
             else:
@@ -309,7 +309,7 @@ def menu_estudiantes(estudiantes, sesiones, asistencia):
             nueva_asistencia = []
             for materia in sesiones:
                 if materia in materias:
-                    nueva_asistencia.append([0]*7) 
+                    nueva_asistencia.append([1]*7) 
                 else:
                     nueva_asistencia.append(None)    # No inscrito
             asistencia.append(nueva_asistencia)
@@ -382,7 +382,7 @@ def menu_estudiantes(estudiantes, sesiones, asistencia):
                     nueva_asistencia = []
                     for materia in sesiones:
                         if materia in materias:
-                            nueva_asistencia.append([0]*7)
+                            nueva_asistencia.append([11]*7)
                         else:
                             nueva_asistencia.append(None)                                  
                     idx = estudiantes.index(est)

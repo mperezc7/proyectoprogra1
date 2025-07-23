@@ -1,0 +1,121 @@
+fisica
+clase,1
+11111,Leo Castillo,P
+11113,Andres Julio,P
+11114,Pepe,A
+11115,Juan,A
+11116,Roman,A
+11117,Paula,A
+11118,Popeye,A
+
+clase,2
+11111,Leo Castillo,P
+11113,Andres Julio,P
+11114,Pepe,A
+11115,Juan,A
+11116,Roman,A
+11117,Paula,A
+11118,Popeye,A
+
+clase,3
+11111,Leo Castillo,P
+11113,Andres Julio,P
+11114,Pepe,A
+11115,Juan,A
+11116,Roman,A
+11117,Paula,A
+11118,Popeye,A
+
+clase,4
+11111,Leo Castillo,P
+11113,Andres Julio,P
+11114,Pepe,A
+11115,Juan,A
+11116,Roman,A
+11117,Paula,A
+11118,Popeye,A
+
+clase,5
+11111,Leo Castillo,P
+11113,Andres Julio,P
+11114,Pepe,A
+11115,Juan,A
+11116,Roman,A
+11117,Paula,A
+11118,Popeye,A
+
+clase,6
+11111,Leo Castillo,P
+11113,Andres Julio,P
+11114,Pepe,A
+11115,Juan,A
+11116,Roman,A
+11117,Paula,A
+11118,Popeye,A
+
+clase,7
+11111,Leo Castillo,P
+11113,Andres Julio,P
+11114,Pepe,A
+11115,Juan,A
+11116,Roman,A
+11117,Paula,A
+11118,Popeye,A
+
+progra1
+clase,1
+11111,Leo Castillo,P
+11112,Caro Casto,P
+11115,Juan,A
+11116,Roman,A
+11117,Paula,A
+11118,Popeye,A
+
+clase,2
+11111,Leo Castillo,P
+11112,Caro Casto,P
+11115,Juan,A
+11116,Roman,A
+11117,Paula,A
+11118,Popeye,A
+
+clase,3
+11111,Leo Castillo,P
+11112,Caro Casto,P
+11115,Juan,A
+11116,Roman,A
+11117,Paula,A
+11118,Popeye,A
+
+clase,4
+11111,Leo Castillo,P
+11112,Caro Casto,P
+11115,Juan,A
+11116,Roman,A
+11117,Paula,A
+11118,Popeye,A
+
+clase,5
+11111,Leo Castillo,P
+11112,Caro Casto,P
+11115,Juan,A
+11116,Roman,A
+11117,Paula,A
+11118,Popeye,A
+
+clase,6
+11111,Leo Castillo,P
+11112,Caro Casto,P
+11115,Juan,A
+11116,Roman,A
+11117,Paula,A
+11118,Popeye,A
+
+clase,7
+11111,Leo Castillo,P
+11112,Caro Casto,P
+11115,Juan,A
+11116,Roman,A
+11117,Paula,A
+11118,Popeye,A
+

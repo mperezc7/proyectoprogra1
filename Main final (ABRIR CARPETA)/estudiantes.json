@@ -1,0 +1,79 @@
+[
+    {
+        "legajo": 11111,
+        "nombre": "Leo Castillo",
+        "correo": "abc1@uade.edu.ar",
+        "materias": [
+            "fisica",
+            "progra1"
+        ],
+        "fecha_baja": null
+    },
+    {
+        "legajo": 11112,
+        "nombre": "Caro Casto",
+        "correo": "abc2@uade.edu.ar",
+        "materias": [
+            "progra1"
+        ],
+        "fecha_baja": null
+    },
+    {
+        "legajo": 11113,
+        "nombre": "Andres Julio",
+        "correo": "abc3@uade.edu.ar",
+        "materias": [
+            "fisica"
+        ],
+        "fecha_baja": null
+    },
+    {
+        "legajo": 11114,
+        "nombre": "Pepe",
+        "correo": "pepe@uade.edu.ar",
+        "materias": [
+            "fisica"
+        ],
+        "fecha_baja": null
+    },
+    {
+        "legajo": 11115,
+        "nombre": "Juan",
+        "correo": "juan@uade.edu.ar",
+        "materias": [
+            "fisica",
+            "progra1"
+        ],
+        "fecha_baja": null
+    },
+    {
+        "legajo": 11116,
+        "nombre": "Roman",
+        "correo": "roman@uade.edu.ar",
+        "materias": [
+            "fisica",
+            "progra1"
+        ],
+        "fecha_baja": null
+    },
+    {
+        "legajo": 11117,
+        "nombre": "Paula",
+        "correo": "paula@uade.edu.ar",
+        "materias": [
+            "fisica",
+            "progra1"
+        ],
+        "fecha_baja": null
+    },
+    {
+        "legajo": 11118,
+        "nombre": "Popeye",
+        "correo": "popeye@uade.edu.ar",
+        "materias": [
+            "fisica",
+            "progra1"
+        ],
+        "fecha_baja": null
+    }
+]
